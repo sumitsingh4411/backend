@@ -45,6 +45,9 @@ If you only have 20 minutes, read these three sections and nothing else:
 | **8** | [Reliability](#part-8--reliability) | The network will fail. Design like it already has. |
 | **9** | [DevOps](#part-9--devops--deploys) | Containers, CI/CD, zero-downtime deploys |
 | **10** | [System design](#part-10--system-design) | The method, the maths, and the classic problems worked through |
+| 🎯 | [The system design interview](#-the-system-design-interview) | The 45-min round, what they grade, how people fail |
+| 📖 | [Backend glossary](#-backend-glossary--the-terms-theyll-drop-on-you) | ~120 terms they'll drop on you, each defined + linked |
+| ❓ | [130 interview questions](#-130-system-design-interview-questions) | The full bank — "Design X", deep dives, concepts, estimation, trade-offs |
 | 📋 | [Cheat sheets](#-cheat-sheets) | Status codes, latency numbers, red flags |
 | 📚 | [Where to go next](#-where-to-go-next) | The best free resources, curated |
 
@@ -1194,6 +1197,390 @@ It allows the **short natural bursts real users create**, while enforcing a stea
 With `hash % N`, changing N from 4 → 5 servers **remaps ~80% of your keys**. Every one is now a **cache miss** — and 80% of traffic slams the database at once, *while you were trying to relieve load*.
 
 **Consistent hashing** puts servers and keys on a **ring**; a key belongs to the first server clockwise. Adding a server moves only **~1/N of keys**.
+
+---
+---
+
+# 🎯 The system design interview
+
+## The 45-minute round, minute by minute
+
+Most candidates fail on **time management**, not knowledge. They spend 25 minutes on requirements and never draw a system.
+
+| Minutes | Do this | The mistake to avoid |
+|---|---|---|
+| **0–5** | **Clarify.** Features, scale, read:write ratio, consistency, latency budget. **Restate it back.** | Designing before you know what you're designing |
+| **5–10** | **Estimate.** QPS, storage, peak. Round hard. | Skipping it — the numbers tell you what the problem *is* |
+| **10–15** | **API + data model.** The endpoints, the entities, the access pattern. | Picking a database before knowing how you'll query |
+| **15–30** | **High-level design.** Draw boxes: client → LB → service → cache → DB. **Talk while you draw.** | Silence. They can't grade what you don't say. |
+| **30–40** | **Deep dive.** They pick one part. Go deep on the bottleneck. | Being surprised — *expect* this and know your hard part |
+| **40–45** | **Bottlenecks, failure modes, trade-offs.** "If X dies, we degrade to Y." | Claiming your design has no weaknesses |
+
+## What they're actually grading
+
+> They are **not** grading whether you got the "right" architecture. There isn't one.
+>
+> They are grading whether you can **say the trade-off out loud**:
+>
+> - *"Reads dominate 100:1, **so** I'll cache aggressively."*
+> - *"This must not double-charge, **so** idempotency keys."*
+> - *"A stale like-count harms nobody, **so** eventual consistency here — but the balance is strong."*
+>
+> **The word "so" is the entire interview.** A candidate who says "I'll use Kafka" is worse than one who says "writes spike 10× at 9am and consumers are slow, *so* I'll buffer with a queue."
+
+## The seven ways people fail
+
+1. **Jumping to a solution** before clarifying requirements.
+2. **No estimation** — so they never discover it's a read-scaling problem.
+3. **Stateful app servers** (sessions or files in local memory) — this kills horizontal scaling and they don't notice.
+4. **Buzzword soup** — naming Kafka, Cassandra and Kubernetes with no reason attached.
+5. **No failure story.** "What if the cache dies?" *"Um."*
+6. **No idempotency** anywhere near a payment.
+7. **Silence.** Thinking quietly for 4 minutes reads as knowing nothing.
+
+## Three sentences that make you sound senior
+
+- *"Before I design: what's the read:write ratio, and can this data be stale?"*
+- *"That's a single point of failure — if it goes down we'd fail **open** here, because a rate-limiter outage shouldn't take down login."*
+- *"I'd start with one Postgres instance. We're at 200 writes/second; sharding now would cost us joins and buy us nothing."*
+
+---
+---
+
+# 📖 Backend glossary — the terms they'll drop on you
+
+Every one of these has come up in a real backend interview. If you can't define it in one sentence, click the link.
+
+## Scale & traffic
+
+| Term | In one sentence | Learn |
+|---|---|---|
+| **QPS / RPS** | Queries (requests) per second — the unit of all capacity maths. | [§10.2](#102-back-of-envelope-fast) |
+| **Throughput vs latency** | Throughput = how many per second. Latency = how long **one** takes. You can have great throughput and terrible latency. | [§7.2](#72-p95p99--the-average-is-a-liar) |
+| **p50 / p95 / p99** | Percentiles. p99 = the slowest 1%. **Nobody experiences the average.** | [§7.2](#72-p95p99--the-average-is-a-liar) |
+| **Tail latency** | Your slow requests. A page making 20 calls hits p99 on *almost every load*. | [Latency numbers](https://gist.github.com/jboner/2841832) |
+| **Horizontal vs vertical scaling** | Add **more** machines vs a **bigger** machine. Vertical hits a ceiling and a price cliff. | [Primer](https://github.com/donnemartin/system-design-primer#index-of-system-design-topics) |
+| **Stateless** | The server keeps nothing between requests → you can kill any box and lose nothing → you can scale out. | [§2.4](#24-stateless-servers--the-thing-that-lets-you-scale) |
+| **Load balancer (L4 vs L7)** | L4 routes by IP/port (fast, dumb). L7 reads the HTTP request (slower, can route by path/header). | [Load balancing](https://en.wikipedia.org/wiki/Load_balancing_(computing)) |
+| **Sticky session** | Pinning a user to one server. A **smell** — it means you're not stateless. | [§2.4](#24-stateless-servers--the-thing-that-lets-you-scale) |
+| **Little's Law** | `L = λW` — concurrency = arrival rate × time in system. Tells you how many in-flight requests you must hold. | [Little's law](https://en.wikipedia.org/wiki/Little%27s_law) |
+| **Amdahl's Law** | The serial part of your work caps your speedup. 90% of time in one query → optimise **that**. | [Amdahl's law](https://en.wikipedia.org/wiki/Amdahl%27s_law) |
+| **Hot key / hot partition** | One key or shard takes disproportionate traffic (a celebrity, a viral post) and melts one node. | [§10.3](#103-design-news-feed-the-celebrity-problem) |
+| **Thundering herd** | Everyone retries or misses the cache *at the same instant* and stampedes the backend. | [Thundering herd](https://en.wikipedia.org/wiki/Thundering_herd_problem) |
+| **Back-pressure** | When you can't keep up, **push back** (reject fast, slow the producer) instead of buffering to death. | [§8.1](#81-timeouts--the-default-is-wait-forever) |
+| **Load shedding** | Deliberately dropping a fraction of traffic (503) so the rest still gets served. **Half up beats all down.** | [Builders' Library](https://aws.amazon.com/builders-library/) |
+| **Token bucket / leaky bucket** | Rate-limit algorithms. Token bucket **allows natural bursts**; leaky bucket smooths to a constant rate. | [Token bucket](https://en.wikipedia.org/wiki/Token_bucket) |
+| **Fan-out** | One event → many writes/reads. Fan-out **on write** = precompute. Fan-out **on read** = compute at query time. | [§10.3](#103-design-news-feed-the-celebrity-problem) |
+| **Write amplification** | One logical write causes many physical writes (50M followers → 50M feed inserts). | [§10.3](#103-design-news-feed-the-celebrity-problem) |
+| **Blast radius** | How much breaks when *this* breaks. Canary deploys shrink it to 5%. | [§9.2](#92-deployment-strategies) |
+
+## Data & storage
+
+| Term | In one sentence | Learn |
+|---|---|---|
+| **OLTP vs OLAP** | Transactions (many small reads/writes: Postgres) vs analytics (huge scans: ClickHouse). Don't run OLAP on your OLTP box. | [OLTP](https://en.wikipedia.org/wiki/Online_transaction_processing) |
+| **Normalization** | One fact, one place. Denormalise **on purpose**, never by accident. | [Normalization](https://en.wikipedia.org/wiki/Database_normalization) |
+| **Index** | A sorted lookup structure. 10M rows → **3–4 hops** instead of a full scan. | [§4.1](#41-indexes--the-single-biggest-win) |
+| **Composite index / leftmost prefix** | `(a, b)` serves `WHERE a` and `WHERE a AND b`, but **not `WHERE b` alone**. | [§4.1](#41-indexes--the-single-biggest-win) |
+| **Covering index** | The index has every column the query needs → *Index Only Scan* → never touches the table. | [Use The Index, Luke](https://use-the-index-luke.com/) |
+| **B-tree** | Balanced tree, updates **in place**. Fast reads. Powers Postgres/MySQL. | [B-tree](https://en.wikipedia.org/wiki/B-tree) |
+| **LSM tree** | Append to memory, flush sorted files, compact later. **Very fast writes.** Powers Cassandra, RocksDB. | [LSM tree](https://en.wikipedia.org/wiki/Log-structured_merge-tree) |
+| **WAL (write-ahead log)** | Append the change to a log and `fsync` **before** touching data files. This is what makes "committed" survive a crash — and what replication and PITR are built on. | [WAL](https://en.wikipedia.org/wiki/Write-ahead_logging) |
+| **MVCC** | Don't overwrite a row — write a **new version**. That's why readers never block writers. Cost: `VACUUM`. | [MVCC](https://en.wikipedia.org/wiki/Multiversion_concurrency_control) |
+| **ACID** | Atomic, Consistent, Isolated, Durable. | [§4.4](#44-transactions-and-acid) |
+| **Isolation levels** | Read committed → repeatable read → serializable. Each blocks more anomalies and costs more. | [§4.6](#46-isolation-levels) |
+| **Optimistic vs pessimistic locking** | Optimistic: check a `version` on write, retry on clash. Pessimistic: `SELECT … FOR UPDATE`, others wait. | [§4.5](#45--the-lost-update--a-race-condition-you-will-write) |
+| **Partitioning** | Split a big table **within one database** (usually by time). Drop last year = `DROP TABLE`, instantly. | [Postgres docs](https://www.postgresql.org/docs/current/ddl-partitioning.html) |
+| **Sharding** | Split rows across **machines** by a shard key. Scales writes; costs you cross-shard joins. | [Sharding](https://en.wikipedia.org/wiki/Shard_(database_architecture)) |
+| **Shard key** | The column you split on. Pick it by **how you query**. Wrong key → every query fans out to every shard. | [§4.8](#48-scaling--in-this-exact-order) |
+| **Replication lag** | The replica is behind the primary. Causes *"I saved it and it didn't save"*. | [§4.8](#48-scaling--in-this-exact-order) |
+| **Quorum (W + R > N)** | Require a **majority** to confirm. A majority can't exist on both sides of a split → no split-brain. | [Quorum](https://en.wikipedia.org/wiki/Quorum_(distributed_computing)) |
+| **Consistent hashing** | Keys and servers on a ring → adding a node moves **~1/N** of keys, not 80%. | [§10.5](#105--hashkey--n-is-a-trap) |
+| **Rendezvous hashing** | Simpler alternative to the ring: pick the server with the highest `hash(key, server)`. | [Rendezvous hashing](https://en.wikipedia.org/wiki/Rendezvous_hashing) |
+| **Materialized view** | A precomputed query result, stored. Fast reads, refresh cost. | [Postgres docs](https://www.postgresql.org/docs/current/rules-materializedviews.html) |
+| **Object storage (S3)** | Where files go. **Never** the local disk of an app server. | [§2.4](#24-stateless-servers--the-thing-that-lets-you-scale) |
+| **CDN** | Cached copies of content physically near the user. | [CDN](https://en.wikipedia.org/wiki/Content_delivery_network) |
+
+## Consistency & distributed systems
+
+| Term | In one sentence | Learn |
+|---|---|---|
+| **CAP theorem** | When the network partitions, choose **C**onsistency or **A**vailability. P isn't optional. | [§8.5](#85-cap--you-dont-get-to-keep-all-three) |
+| **PACELC** | The honest CAP: on Partition choose A or C; **Else** (normal operation) choose **L**atency or **C**onsistency. | [PACELC](https://en.wikipedia.org/wiki/PACELC_theorem) |
+| **Linearizability** | Every read sees the latest write, as if there were one copy. The strongest, slowest guarantee. | [Jepsen](https://jepsen.io/consistency) |
+| **Serializability** | Concurrent transactions behave as if run one after another. (Different axis from linearizability.) | [Jepsen](https://jepsen.io/consistency) |
+| **Eventual consistency** | Replicas converge… eventually. Fine for likes; not for balances. | [Eventual consistency](https://en.wikipedia.org/wiki/Eventual_consistency) |
+| **Read-your-writes** | *You* see *your own* changes immediately, even if others lag. **Usually the real requirement.** | [§4.8](#48-scaling--in-this-exact-order) |
+| **Monotonic reads** | You never see time go backwards (read new, then old). | [Jepsen](https://jepsen.io/consistency) |
+| **Consensus** | Getting N nodes to agree on one value despite failures. | [Consensus](https://en.wikipedia.org/wiki/Consensus_(computer_science)) |
+| **Raft / Paxos** | The two consensus algorithms. Raft is the one you can actually explain. Elect a **leader**; the leader orders writes. | [Raft (visual)](https://raft.github.io/) |
+| **Leader election** | Choosing the one node allowed to write. Needs a majority, or you get… | [Raft](https://raft.github.io/) |
+| **Split-brain** | Two halves of a cluster both think they're the leader and diverge. Quorums prevent it. | [Split-brain](https://en.wikipedia.org/wiki/Split-brain_(computing)) |
+| **Fencing token** | A monotonically increasing number attached to a lock, so a **stale** lock-holder's writes get rejected. | [DDIA](https://dataintensive.net/) |
+| **Clock skew** | Server clocks drift. **Never order events by wall-clock time** — use a sequence or a Snowflake ID. | [Clock skew](https://en.wikipedia.org/wiki/Clock_skew) |
+| **Snowflake ID** | A 64-bit, **time-sortable**, globally unique id generated without coordination (timestamp + machine + counter). | [Snowflake ID](https://en.wikipedia.org/wiki/Snowflake_ID) |
+| **Vector clock** | Tracks causality across replicas so you can detect concurrent (conflicting) updates. | [Vector clock](https://en.wikipedia.org/wiki/Vector_clock) |
+| **CRDT** | A data type that **merges automatically** without conflict. How collaborative editing and offline sync work. | [CRDT](https://en.wikipedia.org/wiki/Conflict-free_replicated_data_type) |
+| **Operational Transform (OT)** | The *other* way to do collaborative editing (Google Docs). Transforms concurrent ops against each other. | [OT](https://en.wikipedia.org/wiki/Operational_transformation) |
+| **Two-phase commit (2PC)** | Distributed transaction: prepare, then commit. **Blocks** if the coordinator dies. Avoid. | [2PC](https://en.wikipedia.org/wiki/Two-phase_commit_protocol) |
+| **Saga** | Replace a distributed transaction with local transactions + **compensating actions** (undo). | [Saga](https://microservices.io/patterns/data/saga.html) |
+| **Transactional outbox** | Write the row **and** the event in ONE DB transaction; a relay publishes it. Fixes the dual-write bug. | [§8.6](#86--the-dual-write-problem) |
+| **Idempotency** | Doing it twice = doing it once. The single most important word in distributed systems. | [§3.3](#33--idempotency-keys--how-you-stop-double-charges) |
+| **At-least-once / at-most-once** | Queues redeliver (duplicates) or drop (loss). Pick your poison — usually at-least-once + idempotency. | [§6.4](#64-queues--respond-now-work-later) |
+| **"Exactly-once"** | **A myth**, at the delivery layer. You get at-least-once delivery + idempotent processing, and *call it* exactly-once. | [§6.4](#64-queues--respond-now-work-later) |
+| **Gossip protocol** | Nodes randomly tell each other what they know; state spreads without a coordinator. | [Gossip](https://en.wikipedia.org/wiki/Gossip_protocol) |
+| **Merkle tree** | Hash tree that lets two replicas find *which* data differs without comparing everything. | [Merkle tree](https://en.wikipedia.org/wiki/Merkle_tree) |
+| **Fallacies of distributed computing** | The 8 comfortable lies (the network is reliable, latency is zero…). Memorise them. | [Fallacies](https://en.wikipedia.org/wiki/Fallacies_of_distributed_computing) |
+
+## Messaging
+
+| Term | In one sentence | Learn |
+|---|---|---|
+| **Queue vs stream** | Queue: each message goes to **one** worker, then it's gone. Stream/log: **every** consumer group reads it, and it's **replayable**. | [§6.4](#64-queues--respond-now-work-later) |
+| **Pub/sub** | Publish to a topic; N subscribers each get a copy. | [Pub/sub](https://en.wikipedia.org/wiki/Publish%E2%80%93subscribe_pattern) |
+| **Consumer group / offset** | Kafka: a group shares the partitions; the **offset** is your bookmark in the log. | [Kafka intro](https://kafka.apache.org/documentation/#introduction) |
+| **Partition key** | Decides which partition a message lands in — and therefore **what's ordered relative to what**. Order is per-partition only. | [Kafka intro](https://kafka.apache.org/documentation/#introduction) |
+| **Dead-letter queue (DLQ)** | After N failures, move the poison message aside so it stops blocking the line. | [DLQ](https://en.wikipedia.org/wiki/Dead_letter_queue) |
+| **Backlog / lag** | How far behind your consumers are. The metric to alert on. | [§6.4](#64-queues--respond-now-work-later) |
+
+## Caching
+
+| Term | In one sentence | Learn |
+|---|---|---|
+| **Cache-aside** | Read: check cache → miss → load DB → fill cache. Write: **delete** the key. The 90% pattern. | [§6.2](#62-cache-aside--the-pattern-youll-use-90-of-the-time) |
+| **Write-through / write-back** | Write to cache+DB together (safe) vs cache now, DB later (**fast, loses data on crash**). | [§6.2](#62-cache-aside--the-pattern-youll-use-90-of-the-time) |
+| **Cache stampede** | A hot key expires → 10,000 requests miss simultaneously → the DB dies. | [Stampede](https://en.wikipedia.org/wiki/Cache_stampede) |
+| **Cache penetration** | Requests for keys that **don't exist** bypass the cache every time. Cache the negative result. | [§6.3](#63--the-three-ways-a-cache-takes-down-your-database) |
+| **Cache avalanche** | Many keys share one expiry and die together. **Add jitter to TTLs.** | [§6.3](#63--the-three-ways-a-cache-takes-down-your-database) |
+| **Eviction policy (LRU/LFU)** | What gets dropped when memory fills. `allkeys-lru` for a cache; **`noeviction` for a queue.** | [Redis eviction](https://redis.io/docs/latest/develop/reference/eviction/) |
+| **Negative caching** | Caching "this doesn't exist" — cheap, and it kills penetration attacks. | [§6.3](#63--the-three-ways-a-cache-takes-down-your-database) |
+
+## Reliability & operations
+
+| Term | In one sentence | Learn |
+|---|---|---|
+| **SLA / SLO / SLI** | SLI = the measurement. SLO = your internal target. SLA = the contract with money attached. | [Google SRE](https://sre.google/sre-book/service-level-objectives/) |
+| **Error budget** | `100% − SLO`. Budget left → ship fast. Budget spent → **freeze features and fix reliability.** Turns an argument into a number. | [Google SRE](https://sre.google/sre-book/service-level-objectives/) |
+| **The nines** | 99% = 3.65 days/yr down. 99.9% = 8.8 hrs. 99.99% = 52 min. **Each nine ≈ 10× the cost.** | [§8](#part-8--reliability) |
+| **Circuit breaker** | After N failures, **stop calling** the broken service and fail fast, so it can recover. | [Fowler](https://martinfowler.com/bliki/CircuitBreaker.html) |
+| **Bulkhead** | Separate pools per dependency, so one slow downstream can't consume every worker. | [Bulkhead](https://learn.microsoft.com/en-us/azure/architecture/patterns/bulkhead) |
+| **Retry with jitter** | Exponential backoff + **randomness**, or 10,000 clients retry in synchronised waves. | [AWS](https://aws.amazon.com/builders-library/timeouts-retries-and-backoff-with-jitter/) |
+| **Timeout budget** | The user's 3s must be *divided* down the call chain, not handed to every layer. | [§8.1](#81-timeouts--the-default-is-wait-forever) |
+| **Graceful degradation** | Recommendations down → show the page **without** them. Degrade, don't die. | [§8.4](#84-graceful-degradation) |
+| **Liveness vs readiness** | Liveness fails → **restart** me. Readiness fails → **stop sending traffic**, but don't kill me. Confusing them = restart loops. | [§9.5](#95-observability) |
+| **Canary / blue-green** | Canary: 5% of users get the new version. Blue-green: flip 100% at once, flip back instantly. | [§9.2](#92-deployment-strategies) |
+| **Feature flag** | **Deploying ≠ releasing.** Ship dark, enable from a dashboard, kill in seconds. | [§9.4](#94-feature-flags--deploying--releasing) |
+| **Chaos engineering** | Break it on purpose in staging, so you find the missing timeout before the outage does. | [Chaos](https://en.wikipedia.org/wiki/Chaos_engineering) |
+| **Four golden signals** | **Latency, traffic, errors, saturation.** Track these and you catch nearly everything. | [Google SRE](https://sre.google/sre-book/monitoring-distributed-systems/) |
+| **MTTR / MTBF** | Mean time to **recover** / **between failures**. Optimising MTTR usually beats chasing MTBF. | [Google SRE](https://sre.google/sre-book/table-of-contents/) |
+| **Blameless post-mortem** | Systems fail, not people. Ask what made the mistake *possible*. Blame just teaches people to hide problems. | [Google SRE](https://sre.google/sre-book/postmortem-culture/) |
+
+## Probabilistic & specialised structures
+
+| Term | In one sentence | Learn |
+|---|---|---|
+| **Bloom filter** | "Definitely not present" or "probably present", in tiny memory. **No false negatives.** Skips pointless disk reads. | [Bloom filter](https://en.wikipedia.org/wiki/Bloom_filter) |
+| **HyperLogLog** | Approximate **unique** counts (e.g. unique visitors) for millions of items in ~12KB. | [HyperLogLog](https://en.wikipedia.org/wiki/HyperLogLog) |
+| **Count-min sketch** | Approximate **frequencies** in fixed memory — "what's trending right now". | [Count-min sketch](https://en.wikipedia.org/wiki/Count%E2%80%93min_sketch) |
+| **Trie** | Prefix tree. The answer to **search autocomplete / typeahead**. | [Trie](https://en.wikipedia.org/wiki/Trie) |
+| **Inverted index** | word → list of documents containing it. The core of every search engine. | [Inverted index](https://en.wikipedia.org/wiki/Inverted_index) |
+| **Geohash / quadtree** | Turn 2D coordinates into something you can **index and range-query**. The answer to "find drivers near me". | [Geohash](https://en.wikipedia.org/wiki/Geohash) |
+| **Consistent hash ring** | See above — the answer to "how do you distribute keys across N caches". | [§10.5](#105--hashkey--n-is-a-trap) |
+
+## Architecture
+
+| Term | In one sentence | Learn |
+|---|---|---|
+| **Monolith vs microservices** | Microservices buy **independent deploys and scaling**; they cost you network calls, distributed transactions, and ops. **Start monolith.** | [Fowler](https://martinfowler.com/articles/microservices.html) |
+| **API gateway** | One front door: routing, auth, rate limiting, TLS. | [Primer](https://github.com/donnemartin/system-design-primer#index-of-system-design-topics) |
+| **BFF (backend-for-frontend)** | A thin per-client API (mobile vs web) so one client's needs don't warp the core service. | [Fowler](https://martinfowler.com/articles/micro-frontends.html) |
+| **Service mesh / sidecar** | Move retries, mTLS, timeouts and tracing *out* of your code into a proxy beside every service. | [Service mesh](https://en.wikipedia.org/wiki/Service_mesh) |
+| **Event-driven** | Services publish facts ("order.created"); others react. Decoupled, and much harder to debug. | [Kafka](https://kafka.apache.org/documentation/#introduction) |
+| **CQRS** | Separate the **write** model from the **read** model. Powerful, and usually overkill. | [Fowler](https://martinfowler.com/bliki/CQRS.html) |
+| **Event sourcing** | Store the **events**, not the current state. Rebuild state by replaying. Full audit log for free. | [Fowler](https://martinfowler.com/eaaDev/EventSourcing.html) |
+| **DDD / bounded context** | Draw service boundaries around **business** domains, not technical layers. | [DDD](https://en.wikipedia.org/wiki/Domain-driven_design) |
+| **Strangler fig** | Migrate a legacy system by routing features to the new one **one at a time**, until the old one is dead. | [Fowler](https://martinfowler.com/bliki/StranglerFigApplication.html) |
+| **12-factor app** | The rules that make an app deployable anywhere (config in env, stateless processes, logs to stdout…). | [12factor](https://12factor.net/) |
+
+---
+---
+
+# ❓ 130 system design interview questions
+
+Grouped the way interviews actually go. **The "really testing" column is the point** — the question is never the question.
+
+## A · The 35 classic "Design X" prompts
+
+| # | Design… | The crux they want you to find | Learn |
+|:--|---|---|---|
+| 1 | **URL shortener** (TinyURL) | Base62-encode a unique id → collisions become *impossible*. 302 not 301, or you lose analytics. | [§10 method](#part-10--system-design) · [Primer](https://github.com/donnemartin/system-design-primer#design-pastebincom-or-bitlycom) |
+| 2 | **Twitter / news feed** | Fan-out on write **+ the celebrity exception**. Hybrid, merged at read. | [§10.3](#103-design-news-feed-the-celebrity-problem) |
+| 3 | **Instagram** | Feed + object storage for media + CDN. Never store images in the DB. | [Primer](https://github.com/donnemartin/system-design-primer) |
+| 4 | **WhatsApp / chat** | WebSockets make servers **stateful** → you need a pub/sub backbone + presence registry. | [§10 · chat](#part-10--system-design) |
+| 5 | **Rate limiter** | Token bucket in Redis with an **atomic Lua script**. Fail open or closed? Say which. | [§10.4](#104-design-rate-limiter) |
+| 6 | **Web crawler** | Politeness (robots.txt, per-domain rate limit), URL dedupe (**Bloom filter**), a frontier queue. | [Bloom filter](https://en.wikipedia.org/wiki/Bloom_filter) |
+| 7 | **Search autocomplete / typeahead** | A **trie**, precomputed top-K per prefix, cached hard. Latency budget is ~50ms. | [Trie](https://en.wikipedia.org/wiki/Trie) |
+| 8 | **YouTube / Netflix** | Upload → transcode **async** into many resolutions → CDN. The DB stores metadata only. | [Primer](https://github.com/donnemartin/system-design-primer) |
+| 9 | **Dropbox / Google Drive** | Chunk files, hash chunks, dedupe, sync deltas — don't re-upload a 2GB file for a one-line change. | [Primer](https://github.com/donnemartin/system-design-primer) |
+| 10 | **Google Docs** (collab editing) | **CRDT or OT.** Last-write-wins destroys people's work. | [CRDT](https://en.wikipedia.org/wiki/Conflict-free_replicated_data_type) |
+| 11 | **Uber / Lyft** | Geospatial index (**geohash/quadtree**) + real-time driver location + matching. | [Geohash](https://en.wikipedia.org/wiki/Geohash) |
+| 12 | **Yelp / proximity service** | Same geospatial core; reads dominate → cache aggressively. | [Quadtree](https://en.wikipedia.org/wiki/Quadtree) |
+| 13 | **Ticketmaster / seat booking** | **The whole problem is the double-booking race.** Pessimistic lock or atomic conditional update + reservation TTL. | [§4.5](#45--the-lost-update--a-race-condition-you-will-write) |
+| 14 | **Payment system** | Idempotency keys, ledger (double-entry), the outbox, and **never** trusting the client's amount. | [§3.3](#33--idempotency-keys--how-you-stop-double-charges) |
+| 15 | **Notification system** | Fan-out + per-channel providers + retries + dedupe + user preferences + **DLQ**. | [§6.4](#64-queues--respond-now-work-later) |
+| 16 | **Distributed unique ID generator** | **Snowflake**: timestamp + machine id + counter. Time-sortable, no coordination. | [Snowflake ID](https://en.wikipedia.org/wiki/Snowflake_ID) |
+| 17 | **Distributed cache** (Redis-like) | Consistent hashing + replication + eviction policy. | [§10.5](#105--hashkey--n-is-a-trap) |
+| 18 | **Key-value store** (Dynamo-like) | Consistent hashing, **quorums (W+R>N)**, vector clocks, hinted handoff, read repair. | [Dynamo paper](https://www.allthingsdistributed.com/2007/10/amazons_dynamo.html) |
+| 19 | **Object store** (S3-like) | Immutable blobs, metadata DB, erasure coding, multipart upload. | [Primer](https://github.com/donnemartin/system-design-primer) |
+| 20 | **Distributed job scheduler** | Leader election, at-least-once execution, **idempotent jobs**, the multi-instance cron trap. | [§6.5](#65--the-cron-trap-that-emails-your-customers-20-times) |
+| 21 | **Log aggregation** (ELK-like) | High write volume → append-only, batch, partition by time, LSM-backed. | [The Log](https://engineering.linkedin.com/distributed-systems/log-what-every-software-engineer-should-know-about-real-time-datas-unifying) |
+| 22 | **Metrics / monitoring system** | Time-series DB, downsampling/rollups, cardinality explosion is the trap. | [Google SRE](https://sre.google/sre-book/monitoring-distributed-systems/) |
+| 23 | **Ad click aggregator** | Massive write volume + **approximate** counts are fine → stream processing, count-min sketch. | [Count-min sketch](https://en.wikipedia.org/wiki/Count%E2%80%93min_sketch) |
+| 24 | **Leaderboard** | Redis **sorted set**. O(log n) rank, trivially. Don't `ORDER BY score` a 10M-row table per request. | [Redis types](https://redis.io/docs/latest/develop/data-types/) |
+| 25 | **Pastebin** | Like the shortener, plus TTL/expiry and object storage for big pastes. | [Primer](https://github.com/donnemartin/system-design-primer#design-pastebincom-or-bitlycom) |
+| 26 | **Stock exchange / order matching** | A single-threaded matching engine per symbol (ordering is everything), event-sourced for audit. | [Event sourcing](https://martinfowler.com/eaaDev/EventSourcing.html) |
+| 27 | **Food delivery / DoorDash** | Geospatial + real-time state machine per order + eventual consistency on ETAs. | [Geohash](https://en.wikipedia.org/wiki/Geohash) |
+| 28 | **Hotel / airline booking** | Inventory reservation with TTL, **saga** across payment + inventory. | [Saga](https://microservices.io/patterns/data/saga.html) |
+| 29 | **Slack / Discord** | Chat + channels + fan-out + presence + read receipts (per-user cursors). | [§10 · chat](#part-10--system-design) |
+| 30 | **Email service** (SES-like) | Queue + rate limits per domain + bounce/complaint handling + retries with backoff. | [§8.2](#82-retries--necessary-and-dangerous) |
+| 31 | **CDN** | Edge caching, cache keys, purge/invalidation, origin shielding. | [CDN](https://en.wikipedia.org/wiki/Content_delivery_network) |
+| 32 | **Google Maps / routing** | Graph partitioning + precomputed shortcuts; you cannot Dijkstra the planet per request. | [Primer](https://github.com/donnemartin/system-design-primer) |
+| 33 | **Online judge / code runner** | Untrusted code → **sandboxing** (containers, seccomp), resource limits, queue-based execution. | [12factor](https://12factor.net/) |
+| 34 | **Recommendation system** | Offline batch compute → serve from a precomputed store. **Never** compute ML per request. | [High Scalability](http://highscalability.com/) |
+| 35 | **API rate-limited public API** (Stripe-like) | Idempotency, versioning, pagination, webhooks, keys per customer. | [§3](#part-3--apis) |
+
+## B · The 30 follow-up deep dives (where you're actually judged)
+
+These are the "okay, now what if…" questions. **This is the real interview.**
+
+| # | Question | What they're really testing | Learn |
+|:--|---|---|---|
+| 36 | How do you generate unique IDs across many servers? | Do you say Snowflake/ULID, or do you say "auto-increment" and not notice it doesn't work? | [Snowflake ID](https://en.wikipedia.org/wiki/Snowflake_ID) |
+| 37 | What happens when a celebrity with 50M followers posts? | Write amplification. The hybrid fan-out. | [§10.3](#103-design-news-feed-the-celebrity-problem) |
+| 38 | Your cache goes down. What happens? | Do you thundering-herd the DB to death? Do you fail open or closed? | [§6.3](#63--the-three-ways-a-cache-takes-down-your-database) |
+| 39 | How do you avoid double-charging a customer? | **Idempotency keys.** If you say "retries", you failed. | [§3.3](#33--idempotency-keys--how-you-stop-double-charges) |
+| 40 | Two users book the last seat at the same time. | The lost-update race. Atomic conditional update or `FOR UPDATE`. | [§4.5](#45--the-lost-update--a-race-condition-you-will-write) |
+| 41 | How do you shard this? What's the shard key? | Do you pick by **access pattern**, or by whatever's unique? | [§4.8](#48-scaling--in-this-exact-order) |
+| 42 | A shard gets hot. Now what? | Hot partition. Split it, salt the key, or cache in front. | [§10.3](#103-design-news-feed-the-celebrity-problem) |
+| 43 | How do you add a cache server without a DB meltdown? | **Consistent hashing.** `% N` remaps 80% of keys. | [§10.5](#105--hashkey--n-is-a-trap) |
+| 44 | How do you guarantee message ordering? | Order is **per-partition**. Same key → same partition. Global ordering costs you throughput. | [Kafka](https://kafka.apache.org/documentation/#introduction) |
+| 45 | Your queue delivers a message twice. | At-least-once is the default. **Make the consumer idempotent.** | [§6.4](#64-queues--respond-now-work-later) |
+| 46 | How do you write to the DB *and* publish an event atomically? | The **dual-write problem** → transactional outbox. | [§8.6](#86--the-dual-write-problem) |
+| 47 | The user updates their profile and it "doesn't save". | **Replica lag.** Route their reads to the primary briefly. | [§4.8](#48-scaling--in-this-exact-order) |
+| 48 | How do you paginate a feed that's constantly changing? | **Cursor**, not offset — or users see duplicates and gaps. | [§3.2](#32--never-return-an-unbounded-list) |
+| 49 | A downstream service becomes slow (not down). | The killer. Timeouts + circuit breaker, or your pool exhausts and you go down with it. | [§8.1](#81-timeouts--the-default-is-wait-forever) |
+| 50 | 10,000 clients all retry at once. | Thundering herd → **jitter**. | [AWS](https://aws.amazon.com/builders-library/timeouts-retries-and-backoff-with-jitter/) |
+| 51 | How do you run a nightly job on 20 instances? | The cron trap → distributed lock or a real scheduler. | [§6.5](#65--the-cron-trap-that-emails-your-customers-20-times) |
+| 52 | How do you rename a column with zero downtime? | Expand/contract — **six steps**. Old and new code run simultaneously. | [§9.3](#93--zero-downtime-migrations-old-and-new-code-run-at-the-same-time) |
+| 53 | How do you deploy without dropping requests? | Rolling/canary + **readiness probes** + graceful shutdown on SIGTERM. | [§9.2](#92-deployment-strategies) |
+| 54 | Your DB hits its connection limit. | `pool × instances`. PgBouncer. | [§4.7](#47--connection-pooling--the-one-that-takes-down-production) |
+| 55 | How do you find *which* query is slow? | `pg_stat_statements` ordered by **total** time, then `EXPLAIN ANALYZE`. | [§4.2](#42-reading-an-explain-plan) |
+| 56 | p99 is 4s but p50 is 50ms. Why? | Tail causes differ from median causes: GC, cold cache, locks, retries, a slow replica. | [§7.2](#72-p95p99--the-average-is-a-liar) |
+| 57 | How do you handle a 10× traffic spike? | Queue to absorb, autoscale, **load shed**, degrade non-critical features. | [§8.4](#84-graceful-degradation) |
+| 58 | How do you prevent one customer from starving the rest? | Per-tenant rate limits + bulkheads (separate pools). | [Bulkhead](https://learn.microsoft.com/en-us/azure/architecture/patterns/bulkhead) |
+| 59 | How do you store 100M images? | Object storage + CDN. **Not** the DB, **not** the local disk. | [§2.4](#24-stateless-servers--the-thing-that-lets-you-scale) |
+| 60 | How do you do full-text search? | Inverted index (Elasticsearch) **beside** the source of truth — never *as* it. | [Inverted index](https://en.wikipedia.org/wiki/Inverted_index) |
+| 61 | How do you find "restaurants near me"? | Geohash / quadtree — you cannot scan every row and compute distance. | [Geohash](https://en.wikipedia.org/wiki/Geohash) |
+| 62 | How do you count unique visitors cheaply? | **HyperLogLog** — ~12KB for millions, approximate. | [HyperLogLog](https://en.wikipedia.org/wiki/HyperLogLog) |
+| 63 | How do you avoid pointless disk reads for missing keys? | **Bloom filter** in front. No false negatives. | [Bloom filter](https://en.wikipedia.org/wiki/Bloom_filter) |
+| 64 | What if the leader node dies? | Election via consensus (Raft), **majority quorum**, fencing tokens to stop the old leader. | [Raft](https://raft.github.io/) |
+| 65 | How would you migrate this to a new database with no downtime? | Dual-write + backfill + shadow reads + cutover + rollback plan. | [PlanetScale](https://planetscale.com/blog/backwards-compatible-databases-changes) |
+
+## C · The 40 concept & terminology questions
+
+Rapid-fire. If you can't answer in **two sentences**, you don't know it yet.
+
+| # | Question | Learn |
+|:--|---|---|
+| 66 | What is the CAP theorem — and why is "pick two" misleading? | [§8.5](#85-cap--you-dont-get-to-keep-all-three) |
+| 67 | What is PACELC and why is it more honest than CAP? | [PACELC](https://en.wikipedia.org/wiki/PACELC_theorem) |
+| 68 | Strong vs eventual consistency — give a real example of each. | [Jepsen](https://jepsen.io/consistency) |
+| 69 | What is read-your-writes consistency, and why do users notice when you don't have it? | [§4.8](#48-scaling--in-this-exact-order) |
+| 70 | What is linearizability? How is it different from serializability? | [Jepsen](https://jepsen.io/consistency) |
+| 71 | Explain ACID. Which letter do NoSQL stores usually trade away? | [§4.4](#44-transactions-and-acid) |
+| 72 | What are the isolation levels, and what anomaly does each still allow? | [§4.6](#46-isolation-levels) |
+| 73 | What is a dirty read / non-repeatable read / phantom / write skew? | [§4.6](#46-isolation-levels) |
+| 74 | Optimistic vs pessimistic locking — when would you use each? | [§4.5](#45--the-lost-update--a-race-condition-you-will-write) |
+| 75 | What is MVCC and why does it mean readers don't block writers? | [MVCC](https://en.wikipedia.org/wiki/Multiversion_concurrency_control) |
+| 76 | What is a write-ahead log, and what three jobs does it do? | [WAL](https://en.wikipedia.org/wiki/Write-ahead_logging) |
+| 77 | B-tree vs LSM tree — which for a write-heavy workload, and why? | [LSM](https://en.wikipedia.org/wiki/Log-structured_merge-tree) |
+| 78 | How does an index actually make a lookup fast? | [§4.1](#41-indexes--the-single-biggest-win) |
+| 79 | Why can a composite index on `(a, b)` not serve `WHERE b = ?`? | [§4.1](#41-indexes--the-single-biggest-win) |
+| 80 | Why is an index on a boolean column usually useless? | [§4.1](#41-indexes--the-single-biggest-win) |
+| 81 | What's an N+1 query, and how does an ORM cause it silently? | [§4.3](#43-the-n1-query--the-most-common-bug-in-backend-code) |
+| 82 | Why is `OFFSET 100000` slow — and what's the correctness bug? | [§3.2](#32--never-return-an-unbounded-list) |
+| 83 | Partitioning vs sharding — what's the actual difference? | [§4.8](#48-scaling--in-this-exact-order) |
+| 84 | What is consistent hashing, and what breaks with `hash % N`? | [§10.5](#105--hashkey--n-is-a-trap) |
+| 85 | What are virtual nodes and why do you need them? | [§10.5](#105--hashkey--n-is-a-trap) |
+| 86 | What is a quorum? Why `W + R > N`? Why an **odd** number of nodes? | [Quorum](https://en.wikipedia.org/wiki/Quorum_(distributed_computing)) |
+| 87 | What is split-brain, and what prevents it? | [Split-brain](https://en.wikipedia.org/wiki/Split-brain_(computing)) |
+| 88 | Explain Raft in 60 seconds. | [Raft](https://raft.github.io/) |
+| 89 | Why should you never order distributed events by wall-clock time? | [Clock skew](https://en.wikipedia.org/wiki/Clock_skew) |
+| 90 | What is idempotency, and which HTTP methods are idempotent? | [§1.2](#12-the-methods-and-the-property-that-matters) |
+| 91 | Why is "exactly-once delivery" a myth — and what do you do instead? | [§6.4](#64-queues--respond-now-work-later) |
+| 92 | Queue vs stream (Kafka) — when do you need replay? | [§6.4](#64-queues--respond-now-work-later) |
+| 93 | What is a dead-letter queue and what problem does it solve? | [DLQ](https://en.wikipedia.org/wiki/Dead_letter_queue) |
+| 94 | What is the dual-write problem? What's the outbox pattern? | [§8.6](#86--the-dual-write-problem) |
+| 95 | What is a saga, and what is a compensating transaction? | [Saga](https://microservices.io/patterns/data/saga.html) |
+| 96 | Why avoid two-phase commit? | [2PC](https://en.wikipedia.org/wiki/Two-phase_commit_protocol) |
+| 97 | Cache-aside vs write-through vs write-back — trade-offs? | [§6.2](#62-cache-aside--the-pattern-youll-use-90-of-the-time) |
+| 98 | Why delete the cache key on write instead of updating it? | [§6.2](#62-cache-aside--the-pattern-youll-use-90-of-the-time) |
+| 99 | What are cache stampede, penetration, and avalanche? | [§6.3](#63--the-three-ways-a-cache-takes-down-your-database) |
+| 100 | What is a circuit breaker? What are its three states? | [Fowler](https://martinfowler.com/bliki/CircuitBreaker.html) |
+| 101 | Why must retries have jitter? | [AWS](https://aws.amazon.com/builders-library/timeouts-retries-and-backoff-with-jitter/) |
+| 102 | Liveness vs readiness probe — what breaks if you confuse them? | [§9.5](#95-observability) |
+| 103 | SLA vs SLO vs SLI. What's an error budget *for*? | [Google SRE](https://sre.google/sre-book/service-level-objectives/) |
+| 104 | What is a Bloom filter? Can it produce a false negative? | [Bloom filter](https://en.wikipedia.org/wiki/Bloom_filter) |
+| 105 | Why is CORS not a security feature of your API? | [§3.6](#36-cors--what-it-actually-is) |
+
+## D · The 12 estimation questions
+
+They want **orders of magnitude**, not decimals. Round `86,400` to `~100k` and move on.
+
+| # | Question | Method |
+|:--|---|---|
+| 106 | How many requests per second is 1M requests/day? | `1M / 86,400 ≈ 12/s`. Peak ≈ 2–10×. |
+| 107 | Estimate QPS for a service with 100M DAU doing 10 actions/day. | `1B / 86,400 ≈ 11.5k/s`; peak ~50–100k/s. |
+| 108 | How much storage for 500M tweets/day at 300 bytes, kept 5 years? | `500M × 300B × 365 × 5 ≈ 270 TB`. |
+| 109 | How many servers do you need for 100k QPS? | Per-server QPS (say 1–5k) → 20–100 boxes + headroom. **State your assumption.** |
+| 110 | How much memory to cache the hot 20% of 100M users? | `20M × ~1KB ≈ 20 GB` → a few Redis nodes. |
+| 111 | How much bandwidth to stream video to 1M concurrent users at 5 Mbps? | `5 Tbps` → **this is why CDNs exist.** |
+| 112 | Can this fit on one machine? | Almost always yes for < ~1TB and < ~10k QPS. **Say so** — it's the senior answer. |
+| 113 | What's the latency budget for a page making 20 backend calls? | If the page must be < 1s, each call gets ~50ms **or must run in parallel.** |
+| 114 | How many DB connections should the pool have? | `≈ 2 × cores` — 10–30, not 300. Then × instances. | 
+| 115 | How long to backfill 500M rows? | Batches of ~10k, rate-limited to protect prod. Compute the hours. **Never one UPDATE.** |
+| 116 | How big is the index on a 100M-row table? | Roughly `rows × key size × ~1.5`. It must fit in RAM to be fast. |
+| 117 | What read:write ratio makes caching worth it? | Anything read-heavy. At 100:1, caching is the *entire* design. |
+
+## E · The 13 trade-off questions ("it depends" — but say *why*)
+
+| # | Question | The answer that scores |
+|:--|---|---|
+| 118 | SQL or NoSQL for this? | **"What's the access pattern?"** Start Postgres; justify leaving it. | 
+| 119 | Monolith or microservices? | **Start monolith.** Microservices buy independent deploys, cost you distributed transactions. | 
+| 120 | Strong or eventual consistency? | **Per field.** Balance = strong. Like-count = eventual. |
+| 121 | Fan-out on write or on read? | **Hybrid.** Write for normal users, read for celebrities. |
+| 122 | Sync or async? | If the user doesn't need the result to continue → **async**. |
+| 123 | REST or gRPC? | Public/browser → REST. Internal, high-volume, typed → gRPC. |
+| 124 | REST or GraphQL? | GraphQL for many clients with varied shapes — **but you own N+1 and caching.** |
+| 125 | Cache TTL or explicit invalidation? | **Both.** Invalidate on write, and keep a TTL as the backstop for the bug you didn't foresee. |
+| 126 | Fail open or fail closed when Redis dies? | **Open** for a normal API. **Closed** for login and payments. Saying which *is* the answer. |
+| 127 | Read replica or cache? | Cache for hot repeated reads. Replica for broad read scaling. Both cost you staleness. |
+| 128 | Polling, SSE, or WebSockets? | Poll if seconds are fine. **SSE** for one-way push. WebSockets only if you truly need bidirectional. |
+| 129 | Shard now or later? | **Later.** Index, fix N+1s, cache, replicate, partition — *then* shard. |
+| 130 | Build or buy? | Buy, until the thing you'd buy becomes your core differentiator. |
+
+## 📺 Where to practise these
+
+| Resource | Why |
+|---|---|
+| [System Design Primer](https://github.com/donnemartin/system-design-primer) | The most complete free resource. **Start here.** Has worked solutions with diagrams. |
+| [ByteByteGo YouTube](https://www.youtube.com/@ByteByteGo) | Short, sharp walkthroughs of exactly these prompts. Free. |
+| [High Scalability](http://highscalability.com/) | How real companies actually built it — the best sanity check on your instincts. |
+| [Designing Data-Intensive Applications](https://dataintensive.net/) | The theory under every answer above. Read it twice. |
+| [AWS Builders' Library](https://aws.amazon.com/builders-library/) | How a hyperscaler really handles timeouts, retries, load shedding. Free. |
+| [Jepsen analyses](https://jepsen.io/analyses) | What databases *actually* guarantee, tested to destruction. |
+| [Raft visualisation](https://raft.github.io/) | Watch consensus happen. It stops being magic in 5 minutes. |
 
 ---
 ---
