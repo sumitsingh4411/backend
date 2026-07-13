@@ -1,0 +1,134 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light dark;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-white text-ink-900 antialiased;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  }
+
+  .dark body {
+    @apply bg-ink-950 text-slate-200;
+  }
+
+  ::selection {
+    @apply bg-brand-400/30;
+  }
+}
+
+@layer components {
+  /* Subtle developer grid backdrop */
+  .grid-backdrop {
+    background-image:
+      linear-gradient(to right, rgba(120, 140, 190, 0.06) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(120, 140, 190, 0.06) 1px, transparent 1px);
+    background-size: 44px 44px;
+  }
+
+  .dark .grid-backdrop {
+    background-image:
+      linear-gradient(to right, rgba(120, 150, 255, 0.05) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(120, 150, 255, 0.05) 1px, transparent 1px);
+  }
+
+  .glass {
+    @apply border border-slate-200/80 bg-white/70 backdrop-blur-xl;
+  }
+
+  .dark .glass {
+    @apply border-white/10 bg-white/[0.03];
+  }
+
+  .gradient-text {
+    @apply bg-gradient-to-r from-brand-400 via-brand-300 to-accent-400 bg-clip-text text-transparent;
+  }
+
+  .btn-primary {
+    @apply inline-flex items-center gap-2 rounded-xl bg-brand-500 px-4 py-2 text-sm font-semibold text-white shadow-glow transition hover:bg-brand-400 active:scale-[0.98];
+  }
+
+  .btn-ghost {
+    @apply inline-flex items-center gap-2 rounded-xl border border-slate-200/80 px-4 py-2 text-sm font-medium text-ink-700 transition hover:bg-slate-100 dark:border-white/10 dark:text-slate-300 dark:hover:bg-white/5;
+  }
+}
+
+/* Custom scrollbar */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(120, 140, 190, 0.35) transparent;
+}
+*::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+*::-webkit-scrollbar-thumb {
+  background: rgba(120, 140, 190, 0.3);
+  border-radius: 999px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+*::-webkit-scrollbar-thumb:hover {
+  background: rgba(120, 140, 190, 0.5);
+  background-clip: content-box;
+}
+
+/* Markdown prose tweaks */
+.prose-content {
+  @apply text-[15px] leading-7 text-slate-700 dark:text-slate-300;
+}
+.prose-content h1 {
+  @apply mb-4 mt-2 font-display text-3xl font-bold tracking-tight text-ink-900 dark:text-white;
+}
+.prose-content h2 {
+  @apply mb-3 mt-10 border-b border-slate-200/70 pb-2 text-2xl font-semibold tracking-tight text-ink-900 dark:border-white/10 dark:text-white;
+}
+.prose-content h3 {
+  @apply mb-2 mt-8 text-lg font-semibold text-ink-900 dark:text-white;
+}
+/* TOC anchors must not land underneath the sticky header */
+.prose-content h2,
+.prose-content h3 {
+  scroll-margin-top: 6rem;
+}
+.prose-content p {
+  @apply my-4;
+}
+.prose-content a {
+  @apply font-medium text-brand-500 underline decoration-brand-400/40 underline-offset-2 hover:text-brand-400;
+}
+.prose-content ul {
+  @apply my-4 list-disc space-y-2 pl-6 marker:text-brand-400;
+}
+.prose-content ol {
+  @apply my-4 list-decimal space-y-2 pl-6 marker:text-brand-400;
+}
+.prose-content blockquote {
+  @apply my-5 rounded-r-lg border-l-4 border-brand-400/60 bg-brand-400/[0.06] py-2 pl-4 pr-3 italic text-slate-600 dark:text-slate-300;
+}
+.prose-content code:not(pre code) {
+  @apply rounded-md bg-slate-100 px-1.5 py-0.5 font-mono text-[13px] text-brand-600 dark:bg-white/5 dark:text-accent-400;
+}
+.prose-content table {
+  @apply my-5 w-full border-collapse overflow-hidden rounded-lg text-sm;
+}
+.prose-content th {
+  @apply border border-slate-200 bg-slate-50 px-3 py-2 text-left font-semibold dark:border-white/10 dark:bg-white/5;
+}
+.prose-content td {
+  @apply border border-slate-200 px-3 py-2 dark:border-white/10;
+}
+.prose-content hr {
+  @apply my-8 border-slate-200 dark:border-white/10;
+}
+.prose-content strong {
+  @apply font-semibold text-ink-900 dark:text-white;
+}

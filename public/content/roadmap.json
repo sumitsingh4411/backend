@@ -1,0 +1,1681 @@
+{
+  "title": "Backend Roadmap",
+  "stages": [
+    {
+      "id": "foundations",
+      "order": 0,
+      "title": "Foundations",
+      "icon": "🧱",
+      "summary": "Start here. Understand what backend actually is and how the web moves data from one computer to another.",
+      "lessons": [
+        {
+          "id": "what-is-backend",
+          "title": "What is Backend?",
+          "file": "00-foundations/what-is-backend.md",
+          "estMinutes": 9,
+          "quiz": [
+            {
+              "q": "Where does backend code run?",
+              "options": ["In the user's browser", "On a server you control", "Inside the DOM", "In CSS"],
+              "answer": 1,
+              "explain": "Backend code runs on a server you control — not on the user's device — which is why it can safely hold secrets and talk to databases."
+            },
+            {
+              "q": "Why can't you put your database password in frontend JavaScript?",
+              "options": ["It would be too slow", "Anyone can open DevTools and read it", "JavaScript can't store strings", "It would break CSS"],
+              "answer": 1,
+              "explain": "Everything shipped to the browser is public. Anyone can read it in DevTools — so secrets only ever live on the backend."
+            }
+          ],
+          "resources": [
+            { "title": "Backend Developer Roadmap", "url": "https://roadmap.sh/backend", "type": "interactive", "note": "The classic visual roadmap — a great companion to this course." },
+            { "title": "What is a web server?", "url": "https://developer.mozilla.org/en-US/docs/Learn/Common_questions/Web_mechanics/What_is_a_web_server", "type": "docs", "note": "MDN's plain-English intro." },
+            { "title": "Server-side vs client-side code", "url": "https://developer.mozilla.org/en-US/docs/Learn/Server-side/First_steps/Introduction", "type": "docs", "note": "MDN's server-side first steps." }
+          ]
+        },
+        {
+          "id": "frontend-vs-backend",
+          "title": "Frontend vs Backend",
+          "file": "00-foundations/frontend-vs-backend.md",
+          "estMinutes": 8,
+          "quiz": [
+            {
+              "q": "Which concern belongs to the backend?",
+              "options": ["Button hover animation", "Validating a password against the database", "CSS grid layout", "Focus rings"],
+              "answer": 1,
+              "explain": "Checking credentials against stored data is a backend job — it needs the database and must not be trusted to the client."
+            },
+            {
+              "q": "Your frontend already validates that age >= 18. Should the backend check it too?",
+              "options": ["No, that's duplicated work", "Yes — an attacker can skip the frontend entirely", "Only in production", "Only if the form changes"],
+              "answer": 1,
+              "explain": "Frontend validation is UX. An attacker can send a raw request with any value, so the backend must re-validate anything that matters."
+            }
+          ],
+          "resources": [
+            { "title": "Never trust the client", "url": "https://owasp.org/www-community/vulnerabilities/Improper_Data_Validation", "type": "article", "note": "OWASP on why client-side validation is never enough." },
+            { "title": "Client-Server Overview", "url": "https://developer.mozilla.org/en-US/docs/Learn/Server-side/First_steps/Client-Server_overview", "type": "docs" }
+          ]
+        },
+        {
+          "id": "how-the-internet-works",
+          "title": "How the Internet Works",
+          "file": "00-foundations/how-the-internet-works.md",
+          "estMinutes": 10,
+          "quiz": [
+            {
+              "q": "What is a 'packet'?",
+              "options": ["A whole web page", "A small chunk of data sent over the network", "A database row", "A CSS file"],
+              "answer": 1,
+              "explain": "Data is broken into small packets that travel independently and are reassembled at the destination."
+            },
+            {
+              "q": "Which protocol guarantees packets arrive in order and re-sends lost ones?",
+              "options": ["UDP", "TCP", "DNS", "HTML"],
+              "answer": 1,
+              "explain": "TCP provides reliable, ordered delivery. UDP is fire-and-forget with no such guarantees."
+            }
+          ],
+          "resources": [
+            { "title": "How does the Internet work?", "url": "https://developer.mozilla.org/en-US/docs/Learn/Common_questions/Web_mechanics/How_does_the_Internet_work", "type": "docs" },
+            { "title": "What happens when you type a URL?", "url": "https://github.com/alex/what-happens-when", "type": "article", "note": "The legendary deep-dive — every layer, in obsessive detail." },
+            { "title": "How the Internet Works (video)", "url": "https://www.youtube.com/watch?v=x3c1ih2NJEg", "type": "video" }
+          ]
+        },
+        {
+          "id": "dns-and-domains",
+          "title": "DNS & Domains",
+          "file": "00-foundations/dns-and-domains.md",
+          "estMinutes": 8,
+          "quiz": [
+            {
+              "q": "What does DNS do?",
+              "options": ["Encrypts traffic", "Turns a domain name into an IP address", "Stores your cookies", "Compresses images"],
+              "answer": 1,
+              "explain": "DNS is the internet's phone book: it resolves human names like example.com to machine IP addresses."
+            },
+            {
+              "q": "You change a DNS record but some users still hit the old server. Why?",
+              "options": ["The record is invalid", "The old answer is still cached until its TTL expires", "DNS is broken", "You need to restart the server"],
+              "answer": 1,
+              "explain": "DNS answers are cached per their TTL. Lower the TTL *before* a migration so changes propagate quickly."
+            }
+          ],
+          "resources": [
+            { "title": "What is DNS?", "url": "https://www.cloudflare.com/learning/dns/what-is-dns/", "type": "article", "note": "Cloudflare's DNS explainer — clear and visual." },
+            { "title": "DNS record types", "url": "https://www.cloudflare.com/learning/dns/dns-records/", "type": "article" },
+            { "title": "How DNS works (comic)", "url": "https://howdns.works/", "type": "interactive", "note": "A genuinely fun cartoon walkthrough." }
+          ]
+        },
+        {
+          "id": "client-server-model",
+          "title": "The Client–Server Model",
+          "file": "00-foundations/client-server-model.md",
+          "estMinutes": 8,
+          "quiz": [
+            {
+              "q": "In the client–server model, who starts the conversation?",
+              "options": ["The server", "The client (by making a request)", "The database", "The DNS resolver"],
+              "answer": 1,
+              "explain": "Clients initiate requests; servers listen and respond. The server doesn't call the client out of the blue."
+            },
+            {
+              "q": "HTTP is 'stateless'. How do you stay logged in across requests?",
+              "options": ["The server remembers your IP", "The client re-sends a token/cookie on every request", "The connection stays open forever", "You can't"],
+              "answer": 1,
+              "explain": "Each request is independent, so the client attaches proof of identity (cookie or token) every single time."
+            }
+          ],
+          "resources": [
+            { "title": "Client-Server Overview", "url": "https://developer.mozilla.org/en-US/docs/Learn/Server-side/First_steps/Client-Server_overview", "type": "docs" },
+            { "title": "An overview of HTTP", "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Overview", "type": "docs" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "http",
+      "order": 1,
+      "title": "The Web & HTTP",
+      "icon": "🌐",
+      "summary": "HTTP is the language every backend speaks. Learn the request/response cycle inside out.",
+      "lessons": [
+        {
+          "id": "http-and-https",
+          "title": "HTTP & HTTPS",
+          "file": "01-http/http-and-https.md",
+          "estMinutes": 8,
+          "quiz": [
+            {
+              "q": "What does the 'S' in HTTPS add?",
+              "options": ["Speed", "Encryption in transit via TLS", "Server-side rendering", "Storage"],
+              "answer": 1,
+              "explain": "HTTPS wraps HTTP in TLS so data can't be read or tampered with between client and server."
+            }
+          ],
+          "resources": [
+            { "title": "An overview of HTTP", "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Overview", "type": "docs" },
+            { "title": "Why HTTPS matters", "url": "https://web.dev/articles/why-https-matters", "type": "article" },
+            { "title": "Let's Encrypt — free certificates", "url": "https://letsencrypt.org/getting-started/", "type": "tool" }
+          ]
+        },
+        {
+          "id": "request-response-anatomy",
+          "title": "Anatomy of a Request & Response",
+          "file": "01-http/request-response-anatomy.md",
+          "estMinutes": 9,
+          "quiz": [
+            {
+              "q": "Which part of a request carries JSON you POST?",
+              "options": ["The method", "The status line", "The body", "The URL path"],
+              "answer": 2,
+              "explain": "The request body carries the payload (like JSON). The method and path describe what and where."
+            }
+          ],
+          "resources": [
+            { "title": "HTTP Messages", "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Messages", "type": "docs", "note": "The exact anatomy of requests and responses." },
+            { "title": "HTTPie — a friendly HTTP client", "url": "https://httpie.io/", "type": "tool", "note": "Great for poking at APIs from the terminal." }
+          ]
+        },
+        {
+          "id": "http-methods",
+          "title": "HTTP Methods",
+          "file": "01-http/http-methods.md",
+          "estMinutes": 8,
+          "quiz": [
+            {
+              "q": "Which method should be safe and not change data?",
+              "options": ["GET", "POST", "DELETE", "PUT"],
+              "answer": 0,
+              "explain": "GET is meant to be read-only and safe — it should never change server state."
+            },
+            {
+              "q": "Which method is NOT idempotent?",
+              "options": ["GET", "PUT", "DELETE", "POST"],
+              "answer": 3,
+              "explain": "Two identical POSTs create two resources. GET/PUT/DELETE can be repeated with the same end result."
+            }
+          ],
+          "resources": [
+            { "title": "HTTP request methods", "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods", "type": "docs" },
+            { "title": "Idempotent methods", "url": "https://developer.mozilla.org/en-US/docs/Glossary/Idempotent", "type": "docs" }
+          ]
+        },
+        {
+          "id": "status-codes",
+          "title": "Status Codes",
+          "file": "01-http/status-codes.md",
+          "estMinutes": 7,
+          "quiz": [
+            {
+              "q": "What does a 401 mean?",
+              "options": ["Server crashed", "Not found", "Unauthorized (you must authenticate)", "Success"],
+              "answer": 2,
+              "explain": "401 Unauthorized means the request lacks valid authentication. 403 means you're authenticated but not allowed."
+            },
+            {
+              "q": "A user sends invalid JSON. Which family of status code should you return?",
+              "options": ["2xx", "3xx", "4xx", "5xx"],
+              "answer": 2,
+              "explain": "4xx = the client's fault. Bad input is a 400. 5xx would wrongly blame your server."
+            }
+          ],
+          "resources": [
+            { "title": "HTTP response status codes", "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Status", "type": "docs" },
+            { "title": "HTTP Cats", "url": "https://http.cat/", "type": "interactive", "note": "Every status code, as a cat. Weirdly effective for memorising them." }
+          ]
+        },
+        {
+          "id": "headers-and-cookies",
+          "title": "Headers & Cookies",
+          "file": "01-http/headers-and-cookies.md",
+          "estMinutes": 8,
+          "quiz": [
+            {
+              "q": "How does a browser send a cookie back to the server?",
+              "options": ["In the URL", "In the Cookie request header automatically", "In localStorage", "It doesn't"],
+              "answer": 1,
+              "explain": "Once set, the browser automatically attaches cookies to matching requests via the Cookie header."
+            },
+            {
+              "q": "Which cookie flag stops JavaScript from reading a session cookie?",
+              "options": ["Secure", "SameSite", "HttpOnly", "Max-Age"],
+              "answer": 2,
+              "explain": "HttpOnly hides the cookie from document.cookie, protecting it from XSS token theft."
+            }
+          ],
+          "resources": [
+            { "title": "HTTP headers", "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers", "type": "docs" },
+            { "title": "Using HTTP cookies", "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Cookies", "type": "docs" },
+            { "title": "SameSite cookies explained", "url": "https://web.dev/articles/samesite-cookies-explained", "type": "article" }
+          ]
+        },
+        {
+          "id": "http-versions",
+          "title": "HTTP/1.1 vs HTTP/2 vs HTTP/3",
+          "file": "01-http/http-versions.md",
+          "estMinutes": 9,
+          "quiz": [
+            {
+              "q": "What key problem does HTTP/2 multiplexing solve?",
+              "options": ["Weak encryption", "Head-of-line blocking at the HTTP layer", "Bad DNS", "Large cookies"],
+              "answer": 1,
+              "explain": "HTTP/2 sends many streams over one TCP connection, so one slow response no longer blocks the others."
+            },
+            {
+              "q": "HTTP/3 is built on which transport protocol?",
+              "options": ["TCP", "QUIC (over UDP)", "FTP", "SMTP"],
+              "answer": 1,
+              "explain": "HTTP/3 runs on QUIC over UDP, which removes TCP's head-of-line blocking and speeds up connection setup."
+            }
+          ],
+          "resources": [
+            { "title": "HTTP/2 explained", "url": "https://http2-explained.haxx.se/", "type": "book", "note": "Free, thorough, written by the curl author." },
+            { "title": "HTTP/3 explained", "url": "https://http3-explained.haxx.se/", "type": "book" },
+            { "title": "What is HTTP/3?", "url": "https://www.cloudflare.com/learning/performance/what-is-http3/", "type": "article" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "servers",
+      "order": 2,
+      "title": "Servers & Runtimes",
+      "icon": "🖥️",
+      "summary": "What a server really is, how it handles many users at once, and the models that make it fast.",
+      "lessons": [
+        {
+          "id": "what-is-a-server",
+          "title": "What is a Server?",
+          "file": "02-servers/what-is-a-server.md",
+          "estMinutes": 8,
+          "quiz": [
+            {
+              "q": "What is a 'port'?",
+              "options": ["A physical cable", "A numbered channel on a machine that a service listens on", "A database", "A DNS record"],
+              "answer": 1,
+              "explain": "A port is a numbered endpoint (like 443 for HTTPS) so one machine can run many services at once."
+            }
+          ],
+          "resources": [
+            { "title": "What is a web server?", "url": "https://developer.mozilla.org/en-US/docs/Learn/Common_questions/Web_mechanics/What_is_a_web_server", "type": "docs" },
+            { "title": "Beej's Guide to Network Programming", "url": "https://beej.us/guide/bgnet/", "type": "book", "note": "If you ever want to see the raw sockets under every framework." }
+          ]
+        },
+        {
+          "id": "processes-threads-concurrency",
+          "title": "Processes, Threads & Concurrency",
+          "file": "02-servers/processes-threads-concurrency.md",
+          "estMinutes": 11,
+          "quiz": [
+            {
+              "q": "Node.js handles many connections mostly by…",
+              "options": ["One thread per request", "A non-blocking event loop", "Restarting per request", "Blocking on I/O"],
+              "answer": 1,
+              "explain": "Node uses a single-threaded event loop with non-blocking I/O to juggle thousands of connections."
+            },
+            {
+              "q": "Why is heavy CPU work dangerous in Node.js?",
+              "options": ["It uses too much RAM", "It blocks the single event loop, freezing all other requests", "It breaks TypeScript", "It disables caching"],
+              "answer": 1,
+              "explain": "The event loop is one thread. A long synchronous computation stalls every other pending request."
+            }
+          ],
+          "resources": [
+            { "title": "The Node.js Event Loop", "url": "https://nodejs.org/en/learn/asynchronous-work/event-loop-timers-and-nexttick", "type": "docs" },
+            { "title": "What the heck is the event loop anyway? (video)", "url": "https://www.youtube.com/watch?v=8aGhZQkoFbQ", "type": "video", "note": "Philip Roberts' famous talk — the clearest explanation ever given." },
+            { "title": "Go Concurrency Patterns (video)", "url": "https://www.youtube.com/watch?v=f6kdp27TYZs", "type": "video", "note": "Rob Pike on goroutines and channels." }
+          ]
+        },
+        {
+          "id": "serverless-vs-traditional",
+          "title": "Serverless vs Traditional Servers",
+          "file": "02-servers/serverless-vs-traditional.md",
+          "estMinutes": 8,
+          "quiz": [
+            {
+              "q": "A 'cold start' happens when…",
+              "options": ["The server is too hot", "A serverless function spins up from idle", "The database is empty", "TLS fails"],
+              "answer": 1,
+              "explain": "Serverless functions that have been idle must boot a fresh environment — that delay is the cold start."
+            }
+          ],
+          "resources": [
+            { "title": "Serverless Architectures", "url": "https://martinfowler.com/articles/serverless.html", "type": "article", "note": "Martin Fowler's definitive, balanced overview." },
+            { "title": "AWS Lambda — how it works", "url": "https://docs.aws.amazon.com/lambda/latest/dg/welcome.html", "type": "docs" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "apis",
+      "order": 3,
+      "title": "APIs",
+      "icon": "🔌",
+      "summary": "APIs are how backends expose their power. Design them well and everything else gets easier.",
+      "lessons": [
+        {
+          "id": "what-is-an-api",
+          "title": "What is an API?",
+          "file": "03-apis/what-is-an-api.md",
+          "estMinutes": 8,
+          "quiz": [
+            {
+              "q": "An API is best described as…",
+              "options": ["A database", "A contract for how software talks to software", "A CSS framework", "A server brand"],
+              "answer": 1,
+              "explain": "An API is a defined contract: given this request, expect this response — regardless of internal implementation."
+            }
+          ],
+          "resources": [
+            { "title": "What is an API?", "url": "https://aws.amazon.com/what-is/api/", "type": "article" },
+            { "title": "Public APIs to practise with", "url": "https://github.com/public-apis/public-apis", "type": "tool", "note": "A huge list of free APIs — great for building things." }
+          ]
+        },
+        {
+          "id": "rest-in-depth",
+          "title": "REST in Depth",
+          "file": "03-apis/rest-in-depth.md",
+          "estMinutes": 10,
+          "quiz": [
+            {
+              "q": "Which URL is the most RESTful for one user?",
+              "options": ["/getUser?id=5", "/users/5", "/user/get/5", "/api?do=user"],
+              "answer": 1,
+              "explain": "REST models resources as nouns with IDs: GET /users/5. The verb comes from the HTTP method, not the URL."
+            }
+          ],
+          "resources": [
+            { "title": "REST API Tutorial", "url": "https://restfulapi.net/", "type": "article" },
+            { "title": "Microsoft REST API Guidelines", "url": "https://github.com/microsoft/api-guidelines/blob/vNext/Guidelines.md", "type": "docs", "note": "A real, battle-tested style guide you can copy." },
+            { "title": "Roy Fielding's REST dissertation (ch. 5)", "url": "https://ics.uci.edu/~fielding/pubs/dissertation/rest_arch_style.htm", "type": "spec", "note": "The original definition of REST, from the source." }
+          ]
+        },
+        {
+          "id": "json-and-serialization",
+          "title": "JSON & Serialization",
+          "file": "03-apis/json-and-serialization.md",
+          "estMinutes": 7,
+          "quiz": [
+            {
+              "q": "Serialization means…",
+              "options": ["Encrypting data", "Turning in-memory objects into a transferable format like JSON", "Sorting arrays", "Caching"],
+              "answer": 1,
+              "explain": "Serialization converts objects to a portable string (JSON); deserialization parses it back into objects."
+            }
+          ],
+          "resources": [
+            { "title": "JSON Schema — validate your payloads", "url": "https://json-schema.org/learn/getting-started-step-by-step", "type": "docs" },
+            { "title": "Zod — TypeScript schema validation", "url": "https://zod.dev/", "type": "tool", "note": "The standard way to validate untrusted JSON in TS." }
+          ]
+        },
+        {
+          "id": "api-design-and-versioning",
+          "title": "API Design, Pagination & Versioning",
+          "file": "03-apis/api-design-and-versioning.md",
+          "estMinutes": 11,
+          "quiz": [
+            {
+              "q": "Why is offset pagination (?page=500) slow on big tables?",
+              "options": ["It uses too much bandwidth", "The database must scan and discard all preceding rows", "It breaks caching", "Offsets aren't supported"],
+              "answer": 1,
+              "explain": "OFFSET 10000 makes the DB walk past 10,000 rows before returning any. Cursor pagination seeks directly instead."
+            },
+            {
+              "q": "A breaking API change means…",
+              "options": ["Adding a new optional field", "Removing or renaming a field clients depend on", "Fixing a typo in docs", "Adding a new endpoint"],
+              "answer": 1,
+              "explain": "Adding optional things is safe. Removing/renaming/changing types breaks existing clients — that needs a new version."
+            }
+          ],
+          "resources": [
+            { "title": "Stripe API design", "url": "https://stripe.com/docs/api", "type": "docs", "note": "Widely considered the gold standard — study how they version and paginate." },
+            { "title": "Cursor-based pagination explained", "url": "https://slack.engineering/evolving-api-pagination-at-slack/", "type": "article", "note": "Slack's engineering write-up on why they moved to cursors." },
+            { "title": "OpenAPI Specification", "url": "https://swagger.io/specification/", "type": "spec", "note": "Describe your API formally — get docs and clients for free." }
+          ]
+        },
+        {
+          "id": "graphql-vs-grpc",
+          "title": "GraphQL & gRPC",
+          "file": "03-apis/graphql-vs-grpc.md",
+          "estMinutes": 9,
+          "quiz": [
+            {
+              "q": "A key advantage of GraphQL over REST is…",
+              "options": ["It's always faster", "Clients request exactly the fields they need", "It needs no schema", "It removes the server"],
+              "answer": 1,
+              "explain": "GraphQL lets the client ask for precisely the fields it wants in one request, avoiding over/under-fetching."
+            }
+          ],
+          "resources": [
+            { "title": "GraphQL — official intro", "url": "https://graphql.org/learn/", "type": "docs" },
+            { "title": "gRPC — official docs", "url": "https://grpc.io/docs/what-is-grpc/introduction/", "type": "docs" },
+            { "title": "Protocol Buffers", "url": "https://protobuf.dev/overview/", "type": "docs" }
+          ]
+        },
+        {
+          "id": "websockets-realtime",
+          "title": "WebSockets & Real-time",
+          "file": "03-apis/websockets-realtime.md",
+          "estMinutes": 9,
+          "quiz": [
+            {
+              "q": "Why use WebSockets instead of polling?",
+              "options": ["They're simpler HTTP", "Persistent two-way connection for instant push", "They cache better", "They need no server"],
+              "answer": 1,
+              "explain": "WebSockets keep an open, bidirectional channel so the server can push updates instantly without repeated requests."
+            }
+          ],
+          "resources": [
+            { "title": "The WebSocket API", "url": "https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API", "type": "docs" },
+            { "title": "Server-Sent Events", "url": "https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events/Using_server-sent_events", "type": "docs", "note": "The simpler one-way alternative — often all you need." },
+            { "title": "Socket.IO", "url": "https://socket.io/docs/v4/", "type": "tool" }
+          ]
+        },
+        {
+          "id": "webhooks",
+          "title": "Webhooks",
+          "file": "03-apis/webhooks.md",
+          "estMinutes": 9,
+          "quiz": [
+            {
+              "q": "How do you verify a webhook really came from the sender?",
+              "options": ["Check the IP address only", "Verify the HMAC signature in the header using a shared secret", "Trust the payload's 'from' field", "You can't"],
+              "answer": 1,
+              "explain": "Providers sign the raw body with a shared secret. Recompute the HMAC and compare — otherwise anyone can forge events."
+            },
+            {
+              "q": "Why must a webhook handler be idempotent?",
+              "options": ["To save memory", "Providers retry on failure, so the same event can arrive twice", "To improve SEO", "It doesn't need to be"],
+              "answer": 1,
+              "explain": "Webhook delivery is at-least-once. Store the event ID and skip duplicates or you'll process the same payment twice."
+            }
+          ],
+          "resources": [
+            { "title": "Stripe webhooks guide", "url": "https://stripe.com/docs/webhooks", "type": "docs", "note": "The reference implementation — signatures, retries, idempotency." },
+            { "title": "webhook.site — inspect webhooks", "url": "https://webhook.site/", "type": "tool", "note": "Instantly see what a provider is actually sending you." }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "databases",
+      "order": 4,
+      "title": "Databases",
+      "icon": "🗄️",
+      "summary": "Where your data lives. Model it well, query it fast, and keep it consistent.",
+      "lessons": [
+        {
+          "id": "sql-vs-nosql",
+          "title": "SQL vs NoSQL",
+          "file": "04-databases/sql-vs-nosql.md",
+          "estMinutes": 9,
+          "quiz": [
+            {
+              "q": "A relational (SQL) database is a great default when…",
+              "options": ["You never need relationships", "Your data is structured and consistency matters", "You hate tables", "You have no schema at all"],
+              "answer": 1,
+              "explain": "SQL shines with structured, related data and strong consistency guarantees via transactions."
+            }
+          ],
+          "resources": [
+            { "title": "PostgreSQL Tutorial", "url": "https://www.postgresqltutorial.com/", "type": "course", "note": "Learn the database you'll most likely use." },
+            { "title": "SQLBolt — learn SQL interactively", "url": "https://sqlbolt.com/", "type": "interactive", "note": "Best free hands-on SQL intro." },
+            { "title": "Choosing a database", "url": "https://www.mongodb.com/resources/basics/databases/nosql-explained", "type": "article" }
+          ]
+        },
+        {
+          "id": "data-modeling",
+          "title": "Data Modeling & Normalization",
+          "file": "04-databases/data-modeling.md",
+          "estMinutes": 10,
+          "quiz": [
+            {
+              "q": "Normalization mainly reduces…",
+              "options": ["Query speed", "Data duplication and update anomalies", "Disk cost only", "Index count"],
+              "answer": 1,
+              "explain": "Normalization removes redundant data so a fact lives in one place, preventing inconsistent updates."
+            }
+          ],
+          "resources": [
+            { "title": "Database normalization explained", "url": "https://www.freecodecamp.org/news/database-normalization-1nf-2nf-3nf-table-examples/", "type": "article" },
+            { "title": "PostgreSQL data types", "url": "https://www.postgresql.org/docs/current/datatype.html", "type": "docs" }
+          ]
+        },
+        {
+          "id": "queries-and-joins",
+          "title": "Queries & Joins",
+          "file": "04-databases/queries-and-joins.md",
+          "estMinutes": 9,
+          "quiz": [
+            {
+              "q": "A JOIN is used to…",
+              "options": ["Delete rows", "Combine rows from related tables", "Encrypt columns", "Create an index"],
+              "answer": 1,
+              "explain": "JOINs combine rows across tables using related keys, e.g. orders joined to their users."
+            },
+            {
+              "q": "You loop over 100 users and query each one's orders. What's the bug?",
+              "options": ["Nothing, that's fine", "The N+1 query problem — use a JOIN or a single IN query", "You need more indexes", "You should use NoSQL"],
+              "answer": 1,
+              "explain": "That's 101 round trips. Fetch it in one query with a JOIN or WHERE user_id IN (...)."
+            }
+          ],
+          "resources": [
+            { "title": "SQLBolt — interactive SQL lessons", "url": "https://sqlbolt.com/", "type": "interactive" },
+            { "title": "A visual explanation of SQL joins", "url": "https://blog.codinghorror.com/a-visual-explanation-of-sql-joins/", "type": "article" },
+            { "title": "PostgreSQL Exercises", "url": "https://pgexercises.com/", "type": "interactive", "note": "Practise real queries against a real schema." }
+          ]
+        },
+        {
+          "id": "indexes",
+          "title": "Indexes",
+          "file": "04-databases/indexes.md",
+          "estMinutes": 9,
+          "quiz": [
+            {
+              "q": "An index speeds up reads but…",
+              "options": ["Has no downside", "Slows writes and uses more storage", "Deletes data", "Breaks joins"],
+              "answer": 1,
+              "explain": "Indexes make lookups fast but must be updated on every write and take extra space — a classic trade-off."
+            },
+            {
+              "q": "You have an index on (user_id, created_at). Which query does it NOT help much?",
+              "options": ["WHERE user_id = 5", "WHERE user_id = 5 ORDER BY created_at", "WHERE created_at > '2026-01-01'", "WHERE user_id = 5 AND created_at > '2026-01-01'"],
+              "answer": 2,
+              "explain": "A composite index is sorted by its leftmost column first. Without user_id, it can't seek efficiently by created_at alone."
+            }
+          ],
+          "resources": [
+            { "title": "Use The Index, Luke!", "url": "https://use-the-index-luke.com/", "type": "book", "note": "THE free resource on SQL indexing. If you read one thing, read this." },
+            { "title": "PostgreSQL — index types", "url": "https://www.postgresql.org/docs/current/indexes-types.html", "type": "docs" }
+          ]
+        },
+        {
+          "id": "query-optimization",
+          "title": "Query Optimization & EXPLAIN",
+          "file": "04-databases/query-optimization.md",
+          "estMinutes": 11,
+          "quiz": [
+            {
+              "q": "In an EXPLAIN plan, seeing 'Seq Scan' on a huge table usually means…",
+              "options": ["The query is optimal", "A likely missing index", "The table is corrupt", "The cache is cold"],
+              "answer": 1,
+              "explain": "A sequential scan reads every row. On a large table filtered by a column, that usually means the index is missing or unusable."
+            },
+            {
+              "q": "Why can wrapping a column in a function (WHERE LOWER(email) = ...) kill an index?",
+              "options": ["Functions are slow", "The index stores raw values, not the function's output — so it can't be used", "It causes a deadlock", "It doesn't"],
+              "answer": 1,
+              "explain": "The index is sorted on the raw column. Transform the column and the DB can no longer seek — unless you add an expression index."
+            }
+          ],
+          "resources": [
+            { "title": "Using EXPLAIN", "url": "https://www.postgresql.org/docs/current/using-explain.html", "type": "docs" },
+            { "title": "explain.dahibi.com — visualize a plan", "url": "https://explain.dalibo.com/", "type": "tool", "note": "Paste an EXPLAIN plan, get a readable diagram." },
+            { "title": "Use The Index, Luke — slow queries", "url": "https://use-the-index-luke.com/sql/dml", "type": "book" }
+          ]
+        },
+        {
+          "id": "transactions-acid",
+          "title": "Transactions & ACID",
+          "file": "04-databases/transactions-acid.md",
+          "estMinutes": 9,
+          "quiz": [
+            {
+              "q": "The 'A' in ACID (Atomicity) means…",
+              "options": ["All-or-nothing execution", "Automatic backups", "Async writes", "Access control"],
+              "answer": 0,
+              "explain": "Atomicity means a transaction fully commits or fully rolls back — never half-applied."
+            },
+            {
+              "q": "Two requests both read stock=1 and both sell the item. What's this called?",
+              "options": ["A deadlock", "A race condition", "A cache miss", "A rollback"],
+              "answer": 1,
+              "explain": "Classic race condition. Fix with a transaction + row lock (SELECT ... FOR UPDATE) or an atomic conditional UPDATE."
+            }
+          ],
+          "resources": [
+            { "title": "PostgreSQL — transaction isolation", "url": "https://www.postgresql.org/docs/current/transaction-iso.html", "type": "docs" },
+            { "title": "Jepsen — consistency models", "url": "https://jepsen.io/consistency", "type": "article", "note": "The definitive map of isolation/consistency levels." }
+          ]
+        },
+        {
+          "id": "orms-and-migrations",
+          "title": "ORMs & Migrations",
+          "file": "04-databases/orms-and-migrations.md",
+          "estMinutes": 8,
+          "quiz": [
+            {
+              "q": "A database migration is…",
+              "options": ["Moving servers", "A versioned, repeatable change to the schema", "A backup", "A cache flush"],
+              "answer": 1,
+              "explain": "Migrations are version-controlled scripts that evolve your schema so every environment stays in sync."
+            }
+          ],
+          "resources": [
+            { "title": "Prisma — getting started", "url": "https://www.prisma.io/docs/getting-started", "type": "docs" },
+            { "title": "Safe schema migrations", "url": "https://www.braintreepayments.com/blog/safe-operations-for-high-volume-postgresql/", "type": "article", "note": "How to change a schema without downtime." }
+          ]
+        },
+        {
+          "id": "connection-pooling",
+          "title": "Connection Pooling",
+          "file": "04-databases/connection-pooling.md",
+          "estMinutes": 8,
+          "quiz": [
+            {
+              "q": "Why use a connection pool instead of connecting per request?",
+              "options": ["Connections are expensive to open and databases cap how many exist", "Pools encrypt traffic", "It avoids SQL injection", "It replaces indexes"],
+              "answer": 0,
+              "explain": "Opening a DB connection costs a TCP + auth handshake, and Postgres allows only a limited number. A pool reuses a small set."
+            },
+            {
+              "q": "You run 10 app instances with pool size 20 each, against Postgres with max_connections=100. What happens?",
+              "options": ["It works fine", "Up to 200 connections are demanded — the DB rejects connections", "The pool auto-shrinks", "Queries get faster"],
+              "answer": 1,
+              "explain": "Pool sizes multiply by instance count. 10 × 20 = 200 > 100 → 'too many connections' errors. Use a proxy like PgBouncer."
+            }
+          ],
+          "resources": [
+            { "title": "PgBouncer", "url": "https://www.pgbouncer.org/", "type": "tool", "note": "The standard connection pooler for Postgres." },
+            { "title": "About connection pool sizing", "url": "https://github.com/brettwooldridge/HikariCP/wiki/About-Pool-Sizing", "type": "article", "note": "Why a *small* pool is usually faster. Counter-intuitive and important." }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "security",
+      "order": 5,
+      "title": "Auth & Security",
+      "icon": "🔐",
+      "summary": "Prove who users are, control what they can do, and keep attackers out.",
+      "lessons": [
+        {
+          "id": "authn-vs-authz",
+          "title": "Authentication vs Authorization",
+          "file": "05-security/authn-vs-authz.md",
+          "estMinutes": 7,
+          "quiz": [
+            {
+              "q": "Authorization answers which question?",
+              "options": ["Who are you?", "Are you allowed to do this?", "Is TLS on?", "What's your IP?"],
+              "answer": 1,
+              "explain": "Authentication = who you are; authorization = what you're permitted to do."
+            }
+          ],
+          "resources": [
+            { "title": "Authorization cheat sheet", "url": "https://cheatsheetseries.owasp.org/cheatsheets/Authorization_Cheat_Sheet.html", "type": "docs", "note": "OWASP's practical checklist." },
+            { "title": "RBAC vs ABAC", "url": "https://auth0.com/docs/manage-users/access-control/rbac", "type": "docs" }
+          ]
+        },
+        {
+          "id": "sessions-and-jwt",
+          "title": "Sessions & JWT",
+          "file": "05-security/sessions-and-jwt.md",
+          "estMinutes": 10,
+          "quiz": [
+            {
+              "q": "A JWT is trustworthy because…",
+              "options": ["It's encrypted by default", "It's signed, so tampering is detectable", "It's stored on the server", "It never expires"],
+              "answer": 1,
+              "explain": "A JWT is signed; if anyone changes the payload the signature no longer validates. (Note: signed ≠ encrypted.)"
+            },
+            {
+              "q": "Can you put a user's secret API key inside a JWT payload?",
+              "options": ["Yes, it's encrypted", "No — the payload is just base64 and anyone can read it", "Only with RS256", "Only if it expires"],
+              "answer": 1,
+              "explain": "JWTs are signed, not encrypted. The payload is trivially decodable — never put secrets in it."
+            }
+          ],
+          "resources": [
+            { "title": "jwt.io — decode & inspect tokens", "url": "https://jwt.io/", "type": "interactive", "note": "Paste a JWT and see exactly how readable it is." },
+            { "title": "JWT best practices (RFC 8725)", "url": "https://datatracker.ietf.org/doc/html/rfc8725", "type": "spec" },
+            { "title": "Stop using JWT for sessions", "url": "http://cryptonector.com/2017/06/02/stop-using-jwt-for-sessions/", "type": "article", "note": "The classic counter-argument. Read it before defaulting to JWT." }
+          ]
+        },
+        {
+          "id": "oauth-oidc",
+          "title": "OAuth 2.0 & OpenID Connect",
+          "file": "05-security/oauth-oidc.md",
+          "estMinutes": 9,
+          "quiz": [
+            {
+              "q": "OAuth 2.0 is primarily about…",
+              "options": ["Encrypting databases", "Delegated authorization ('log in with Google')", "Load balancing", "Caching"],
+              "answer": 1,
+              "explain": "OAuth lets a user grant an app limited access to their account elsewhere without sharing their password."
+            },
+            {
+              "q": "Which flow should a single-page app use today?",
+              "options": ["Implicit flow", "Authorization Code + PKCE", "Password grant", "Client credentials"],
+              "answer": 1,
+              "explain": "The implicit flow is deprecated. SPAs and mobile apps use Authorization Code with PKCE."
+            }
+          ],
+          "resources": [
+            { "title": "OAuth 2.0 Simplified", "url": "https://www.oauth.com/", "type": "book", "note": "Aaron Parecki's free book — the friendliest OAuth resource there is." },
+            { "title": "OAuth 2.0 official site", "url": "https://oauth.net/2/", "type": "spec" },
+            { "title": "OpenID Connect explained", "url": "https://connect2id.com/learn/openid-connect", "type": "article" }
+          ]
+        },
+        {
+          "id": "password-hashing",
+          "title": "Password Hashing",
+          "file": "05-security/password-hashing.md",
+          "estMinutes": 8,
+          "quiz": [
+            {
+              "q": "How should passwords be stored?",
+              "options": ["Plain text", "Encrypted and reversible", "Slow-hashed with a salt (bcrypt/argon2)", "In a cookie"],
+              "answer": 2,
+              "explain": "Never store plaintext. Use a slow, salted hash like bcrypt or argon2 so leaks are hard to crack."
+            },
+            {
+              "q": "Why is SHA-256 a bad choice for passwords?",
+              "options": ["It's insecure and broken", "It's too fast — a GPU can try billions of guesses per second", "It's too slow", "It can't be salted"],
+              "answer": 1,
+              "explain": "SHA-256 is a fine hash but designed for speed. Password hashing must be deliberately slow and memory-hard."
+            }
+          ],
+          "resources": [
+            { "title": "Password Storage Cheat Sheet", "url": "https://cheatsheetseries.owasp.org/cheatsheets/Password_Storage_Cheat_Sheet.html", "type": "docs", "note": "OWASP's exact recommended parameters. Follow this." },
+            { "title": "How to safely store a password", "url": "https://codahale.com/how-to-safely-store-a-password/", "type": "article" },
+            { "title": "Have I Been Pwned", "url": "https://haveibeenpwned.com/Passwords", "type": "tool", "note": "Check passwords against known breaches (k-anonymity API)." }
+          ]
+        },
+        {
+          "id": "owasp-top-10",
+          "title": "OWASP Top 10",
+          "file": "05-security/owasp-top-10.md",
+          "estMinutes": 11,
+          "quiz": [
+            {
+              "q": "SQL injection is prevented mainly by…",
+              "options": ["Hiding the database", "Parameterized queries", "Faster servers", "Using NoSQL only"],
+              "answer": 1,
+              "explain": "Parameterized (prepared) queries separate code from data so user input can't become SQL."
+            },
+            {
+              "q": "GET /orders/123 returns any user's order to any logged-in user. What vulnerability is this?",
+              "options": ["XSS", "CSRF", "Broken access control (IDOR)", "SQL injection"],
+              "answer": 2,
+              "explain": "IDOR — you authenticated the user but never checked they own the resource. The most common real-world breach."
+            }
+          ],
+          "resources": [
+            { "title": "OWASP Top 10", "url": "https://owasp.org/www-project-top-ten/", "type": "docs", "note": "The source. Bookmark it." },
+            { "title": "OWASP Cheat Sheet Series", "url": "https://cheatsheetseries.owasp.org/", "type": "docs", "note": "Practical, per-topic defensive guidance." },
+            { "title": "PortSwigger Web Security Academy", "url": "https://portswigger.net/web-security", "type": "interactive", "note": "Free labs where you actually exploit these bugs. Best security training online." }
+          ]
+        },
+        {
+          "id": "cors-and-rate-limiting",
+          "title": "CORS & Rate Limiting",
+          "file": "05-security/cors-and-rate-limiting.md",
+          "estMinutes": 9,
+          "quiz": [
+            {
+              "q": "CORS is enforced by…",
+              "options": ["The server's firewall", "The browser", "The database", "DNS"],
+              "answer": 1,
+              "explain": "CORS is a browser mechanism: the browser blocks cross-origin responses unless the server opts in via headers."
+            },
+            {
+              "q": "Your API works in Postman but fails with a CORS error in the browser. Where's the fix?",
+              "options": ["In the frontend fetch options", "On the server — send the right Access-Control-Allow-* headers", "In DNS", "Disable the browser"],
+              "answer": 1,
+              "explain": "CORS is granted by the server. The frontend cannot fix it — the API must send the headers."
+            }
+          ],
+          "resources": [
+            { "title": "CORS — MDN", "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS", "type": "docs", "note": "The definitive reference, including preflight." },
+            { "title": "Will it CORS?", "url": "https://httptoolkit.com/will-it-cors/", "type": "interactive", "note": "Answers 'why is my request being blocked?' step by step." },
+            { "title": "Rate limiting strategies", "url": "https://cloud.google.com/architecture/rate-limiting-strategies-techniques", "type": "article" }
+          ]
+        },
+        {
+          "id": "secrets-and-tls",
+          "title": "Secrets Management & TLS",
+          "file": "05-security/secrets-and-tls.md",
+          "estMinutes": 10,
+          "quiz": [
+            {
+              "q": "You accidentally committed an API key, then deleted it in the next commit. Is it safe?",
+              "options": ["Yes, it's deleted", "No — it lives in git history forever. You must rotate the key", "Yes, if the repo is private", "Only if you force-push"],
+              "answer": 1,
+              "explain": "Git history is permanent and may already be cloned/scraped. The only real fix is to rotate (revoke and reissue) the secret."
+            },
+            {
+              "q": "In a TLS handshake, the certificate proves…",
+              "options": ["The data is compressed", "The server really is who it claims to be (vouched for by a CA)", "The user is logged in", "The connection is fast"],
+              "answer": 1,
+              "explain": "The cert binds a public key to a domain, signed by a trusted Certificate Authority — that's the authenticity guarantee."
+            }
+          ],
+          "resources": [
+            { "title": "How HTTPS works (comic)", "url": "https://howhttps.works/", "type": "interactive", "note": "TLS handshake explained without the pain." },
+            { "title": "SSL Labs server test", "url": "https://www.ssllabs.com/ssltest/", "type": "tool", "note": "Grade your own site's TLS config." },
+            { "title": "Secrets Management Cheat Sheet", "url": "https://cheatsheetseries.owasp.org/cheatsheets/Secrets_Management_Cheat_Sheet.html", "type": "docs" },
+            { "title": "gitleaks — find committed secrets", "url": "https://github.com/gitleaks/gitleaks", "type": "tool" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "beyond",
+      "order": 6,
+      "title": "Beyond Basics",
+      "icon": "⚡",
+      "summary": "Make backends fast and observable: caching, queues, jobs, config, logging, and metrics.",
+      "lessons": [
+        {
+          "id": "caching-and-redis",
+          "title": "Caching & Redis",
+          "file": "06-beyond/caching-and-redis.md",
+          "estMinutes": 10,
+          "quiz": [
+            {
+              "q": "A cache mainly improves…",
+              "options": ["Security", "Latency by avoiding repeated expensive work", "Data durability", "Schema design"],
+              "answer": 1,
+              "explain": "Caching stores results of expensive operations so repeat requests are served fast from memory."
+            },
+            {
+              "q": "A popular key expires and 1,000 requests hit the DB at once. What's this called?",
+              "options": ["Cache stampede", "Cache hit", "Eviction", "Sharding"],
+              "answer": 0,
+              "explain": "A cache stampede (thundering herd). Mitigate with a lock/single-flight, or by staggering TTLs."
+            }
+          ],
+          "resources": [
+            { "title": "Redis — official docs", "url": "https://redis.io/docs/latest/develop/", "type": "docs" },
+            { "title": "Try Redis interactively", "url": "https://try.redis.io/", "type": "interactive" },
+            { "title": "Caching strategies", "url": "https://aws.amazon.com/caching/best-practices/", "type": "article" }
+          ]
+        },
+        {
+          "id": "cache-invalidation",
+          "title": "Cache Invalidation Strategies",
+          "file": "06-beyond/cache-invalidation.md",
+          "estMinutes": 10,
+          "quiz": [
+            {
+              "q": "Why is 'write-through' caching safer than 'write-behind'?",
+              "options": ["It's faster", "The cache and DB are updated together, so a crash can't lose the write", "It uses less memory", "It needs no TTL"],
+              "answer": 1,
+              "explain": "Write-behind buffers writes in the cache and flushes later — a crash loses them. Write-through commits to the DB synchronously."
+            },
+            {
+              "q": "The safest default for keeping caches from going permanently stale is…",
+              "options": ["Never caching", "Always setting a TTL", "Caching forever", "Using bigger keys"],
+              "answer": 1,
+              "explain": "A TTL is your safety net: even if invalidation logic has a bug, stale entries eventually expire on their own."
+            }
+          ],
+          "resources": [
+            { "title": "Caching patterns", "url": "https://docs.aws.amazon.com/whitepapers/latest/database-caching-strategies-using-redis/caching-patterns.html", "type": "docs", "note": "Cache-aside, write-through, write-behind, compared properly." },
+            { "title": "Scaling Memcache at Facebook", "url": "https://research.facebook.com/publications/scaling-memcache-at-facebook/", "type": "article", "note": "A famous paper on cache invalidation at extreme scale." }
+          ]
+        },
+        {
+          "id": "queues-and-pubsub",
+          "title": "Queues & Pub/Sub",
+          "file": "06-beyond/queues-and-pubsub.md",
+          "estMinutes": 9,
+          "quiz": [
+            {
+              "q": "Why put slow work on a queue?",
+              "options": ["To respond fast now and process later", "To delete it", "To encrypt it", "To avoid databases"],
+              "answer": 0,
+              "explain": "Queues let you acknowledge quickly and process heavy tasks asynchronously with workers."
+            },
+            {
+              "q": "In pub/sub, a published message goes to…",
+              "options": ["Exactly one subscriber", "Every subscriber", "The database only", "Nobody"],
+              "answer": 1,
+              "explain": "Pub/sub broadcasts to all subscribers. A queue gives each message to exactly one consumer."
+            }
+          ],
+          "resources": [
+            { "title": "Kafka — introduction", "url": "https://kafka.apache.org/documentation/#introduction", "type": "docs" },
+            { "title": "RabbitMQ tutorials", "url": "https://www.rabbitmq.com/tutorials", "type": "course", "note": "Excellent hands-on tutorials in many languages." },
+            { "title": "BullMQ (Node job queue)", "url": "https://docs.bullmq.io/", "type": "tool" }
+          ]
+        },
+        {
+          "id": "background-jobs",
+          "title": "Background Jobs & Scheduling",
+          "file": "06-beyond/background-jobs.md",
+          "estMinutes": 9,
+          "quiz": [
+            {
+              "q": "You run 5 instances of your app, each with a cron that emails invoices at 9am. What happens?",
+              "options": ["Nothing, it's fine", "Every customer gets 5 emails — you need a distributed lock or a leader", "The cron won't fire", "Emails are queued"],
+              "answer": 1,
+              "explain": "Every instance runs the cron. Use a distributed lock, a leader election, or a dedicated scheduler so it fires once."
+            },
+            {
+              "q": "What is a dead-letter queue for?",
+              "options": ["Deleting messages", "Parking messages that failed repeatedly, for a human to inspect", "Encrypting payloads", "Speeding up workers"],
+              "answer": 1,
+              "explain": "After N failed retries, move the message to a DLQ instead of retrying forever — then alert and investigate."
+            }
+          ],
+          "resources": [
+            { "title": "Celery — distributed task queue", "url": "https://docs.celeryq.dev/en/stable/getting-started/introduction.html", "type": "docs" },
+            { "title": "Exponential backoff and jitter", "url": "https://aws.amazon.com/builders-library/timeouts-retries-and-backoff-with-jitter/", "type": "article", "note": "AWS Builders' Library — how to retry without killing your own service." },
+            { "title": "Crontab guru", "url": "https://crontab.guru/", "type": "tool", "note": "Stop guessing at cron expressions." }
+          ]
+        },
+        {
+          "id": "config-and-logging",
+          "title": "Config & Logging",
+          "file": "06-beyond/config-and-logging.md",
+          "estMinutes": 8,
+          "quiz": [
+            {
+              "q": "Where should secrets like API keys live?",
+              "options": ["Hard-coded in source", "In environment variables / a secrets manager", "In the frontend", "In git"],
+              "answer": 1,
+              "explain": "Config and secrets belong in the environment, never committed to source control."
+            }
+          ],
+          "resources": [
+            { "title": "The Twelve-Factor App", "url": "https://12factor.net/config", "type": "article", "note": "The canonical guide to config. Short and worth reading in full." },
+            { "title": "Pino — fast Node logger", "url": "https://getpino.io/", "type": "tool" }
+          ]
+        },
+        {
+          "id": "observability",
+          "title": "Observability",
+          "file": "06-beyond/observability.md",
+          "estMinutes": 9,
+          "quiz": [
+            {
+              "q": "The 'three pillars' of observability are…",
+              "options": ["CPU, RAM, disk", "Logs, metrics, traces", "Dev, staging, prod", "HTTP, TCP, IP"],
+              "answer": 1,
+              "explain": "Logs (events), metrics (numbers over time), and traces (request paths) together explain system behavior."
+            },
+            {
+              "q": "Why track p95/p99 latency instead of the average?",
+              "options": ["It's easier to compute", "Averages hide the slow tail that real users actually feel", "p99 is always lower", "Averages are unavailable"],
+              "answer": 1,
+              "explain": "An average can look fine while 5% of users wait 10 seconds. Percentiles expose the pain."
+            }
+          ],
+          "resources": [
+            { "title": "OpenTelemetry — get started", "url": "https://opentelemetry.io/docs/", "type": "docs", "note": "Instrument once, stay vendor-neutral. Start here." },
+            { "title": "Google SRE Book — Monitoring", "url": "https://sre.google/sre-book/monitoring-distributed-systems/", "type": "book", "note": "The four golden signals, from the source. Free to read." },
+            { "title": "Prometheus — first steps", "url": "https://prometheus.io/docs/introduction/first_steps/", "type": "docs" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "architecture",
+      "order": 7,
+      "title": "Architecture & Scaling",
+      "icon": "🏗️",
+      "summary": "Pro territory: how backends grow to handle millions of users without falling over.",
+      "lessons": [
+        {
+          "id": "scaling-basics",
+          "title": "Scaling: Vertical vs Horizontal",
+          "file": "07-architecture/scaling-basics.md",
+          "estMinutes": 9,
+          "quiz": [
+            {
+              "q": "Horizontal scaling means…",
+              "options": ["A bigger single machine", "More machines sharing the load", "A faster CPU", "More RAM only"],
+              "answer": 1,
+              "explain": "Horizontal scaling adds more servers behind a load balancer; vertical scaling makes one server bigger."
+            },
+            {
+              "q": "What must be true before you can scale horizontally?",
+              "options": ["The app must be stateless", "You must use microservices", "You need Kubernetes", "You must shard the DB"],
+              "answer": 0,
+              "explain": "If a server keeps sessions/files/cache in its own memory, requests routed elsewhere break. Push state to shared services."
+            }
+          ],
+          "resources": [
+            { "title": "The System Design Primer", "url": "https://github.com/donnemartin/system-design-primer", "type": "course", "note": "The most popular free system-design resource on GitHub. Start here." },
+            { "title": "Scalability for Dummies", "url": "https://web.archive.org/web/20220630015922/http://www.lecloud.net/tagged/scalability", "type": "article" }
+          ]
+        },
+        {
+          "id": "load-balancing",
+          "title": "Load Balancing",
+          "file": "07-architecture/load-balancing.md",
+          "estMinutes": 8,
+          "quiz": [
+            {
+              "q": "A load balancer's job is to…",
+              "options": ["Store data", "Distribute requests across servers", "Encrypt passwords", "Cache HTML"],
+              "answer": 1,
+              "explain": "It spreads incoming traffic across many backend instances and routes around unhealthy ones."
+            },
+            {
+              "q": "Behind a load balancer, how do you get the real client IP?",
+              "options": ["req.ip always works", "Read the X-Forwarded-For header (and trust the proxy)", "From DNS", "You can't"],
+              "answer": 1,
+              "explain": "Otherwise every request appears to come from the LB — breaking rate limiting and logging."
+            }
+          ],
+          "resources": [
+            { "title": "What is load balancing?", "url": "https://www.cloudflare.com/learning/performance/what-is-load-balancing/", "type": "article" },
+            { "title": "Nginx as a load balancer", "url": "https://docs.nginx.com/nginx/admin-guide/load-balancer/http-load-balancer/", "type": "docs" }
+          ]
+        },
+        {
+          "id": "consistent-hashing",
+          "title": "Consistent Hashing",
+          "file": "07-architecture/consistent-hashing.md",
+          "estMinutes": 10,
+          "quiz": [
+            {
+              "q": "With hash(key) % N, what happens when you add one server?",
+              "options": ["Nothing changes", "Almost every key remaps to a different server", "Only new keys move", "The cache gets faster"],
+              "answer": 1,
+              "explain": "Changing N changes the modulo for nearly every key — a catastrophic cache flush. Consistent hashing fixes exactly this."
+            },
+            {
+              "q": "What are 'virtual nodes' for in consistent hashing?",
+              "options": ["Encryption", "Spreading each server across many ring positions so load is even", "Backups", "Faster hashing"],
+              "answer": 1,
+              "explain": "One point per server distributes unevenly. Placing each server at many points on the ring smooths the load."
+            }
+          ],
+          "resources": [
+            { "title": "Consistent hashing explained", "url": "https://www.toptal.com/big-data/consistent-hashing", "type": "article", "note": "Clear walkthrough with diagrams." },
+            { "title": "Dynamo: Amazon's key-value store", "url": "https://www.allthingsdistributed.com/files/amazon-dynamo-sosp2007.pdf", "type": "spec", "note": "The paper that popularized consistent hashing in industry." }
+          ]
+        },
+        {
+          "id": "monolith-vs-microservices",
+          "title": "Monolith vs Microservices",
+          "file": "07-architecture/monolith-vs-microservices.md",
+          "estMinutes": 10,
+          "quiz": [
+            {
+              "q": "A common downside of microservices is…",
+              "options": ["Can't scale", "Operational and network complexity", "No deployments", "One language only"],
+              "answer": 1,
+              "explain": "Splitting into services adds network calls, distributed failures, and ops overhead — real costs to weigh."
+            },
+            {
+              "q": "What should most small teams start with?",
+              "options": ["Microservices from day one", "A modular monolith", "Serverless only", "No architecture"],
+              "answer": 1,
+              "explain": "A modular monolith keeps deploys simple while enforcing clean boundaries you can extract later — if you ever need to."
+            }
+          ],
+          "resources": [
+            { "title": "MonolithFirst", "url": "https://martinfowler.com/bliki/MonolithFirst.html", "type": "article", "note": "Martin Fowler on why starting with microservices usually fails." },
+            { "title": "Microservices — a definition", "url": "https://martinfowler.com/articles/microservices.html", "type": "article" },
+            { "title": "Modular Monolith", "url": "https://www.kamilgrzybek.com/blog/posts/modular-monolith-primer", "type": "article" }
+          ]
+        },
+        {
+          "id": "event-driven-architecture",
+          "title": "Event-Driven Architecture",
+          "file": "07-architecture/event-driven-architecture.md",
+          "estMinutes": 10,
+          "quiz": [
+            {
+              "q": "The main benefit of emitting an 'OrderPlaced' event instead of calling three services directly is…",
+              "options": ["It's faster", "The producer doesn't need to know who consumes it — services stay decoupled", "It uses less memory", "It removes the need for a database"],
+              "answer": 1,
+              "explain": "The order service just announces what happened. New consumers can be added later without touching it."
+            },
+            {
+              "q": "A key downside of event-driven systems is…",
+              "options": ["They can't scale", "Harder to trace and reason about the overall flow", "They need SQL", "They're synchronous"],
+              "answer": 1,
+              "explain": "Control flow becomes implicit and spread across services — you need good tracing and clear event contracts."
+            }
+          ],
+          "resources": [
+            { "title": "What do you mean by 'Event-Driven'?", "url": "https://martinfowler.com/articles/201701-event-driven.html", "type": "article", "note": "Fowler disentangles the four things people mean by this term." },
+            { "title": "Kafka — event-driven design", "url": "https://kafka.apache.org/documentation/#design", "type": "docs" }
+          ]
+        },
+        {
+          "id": "api-gateway-service-mesh",
+          "title": "API Gateways & Service Mesh",
+          "file": "07-architecture/api-gateway-service-mesh.md",
+          "estMinutes": 9,
+          "quiz": [
+            {
+              "q": "An API gateway handles…",
+              "options": ["Database indexing", "Cross-cutting concerns at the edge: auth, rate limiting, routing", "CSS bundling", "Schema migrations"],
+              "answer": 1,
+              "explain": "It's the single front door: authenticate once, rate limit, route, and stop each service from reimplementing all that."
+            },
+            {
+              "q": "A service mesh mainly manages…",
+              "options": ["Traffic between your internal services (retries, mTLS, tracing)", "The frontend build", "Your database schema", "DNS records"],
+              "answer": 0,
+              "explain": "A mesh moves service-to-service concerns (mTLS, retries, circuit breaking, telemetry) into sidecars, out of your app code."
+            }
+          ],
+          "resources": [
+            { "title": "Backends for Frontends (BFF)", "url": "https://samnewman.io/patterns/architectural/bff/", "type": "article", "note": "Sam Newman on tailoring a gateway per client." },
+            { "title": "Istio — what is a service mesh?", "url": "https://istio.io/latest/about/service-mesh/", "type": "docs" },
+            { "title": "Kong / Envoy gateway patterns", "url": "https://www.envoyproxy.io/docs/envoy/latest/intro/what_is_envoy", "type": "docs" }
+          ]
+        },
+        {
+          "id": "replication-and-sharding",
+          "title": "Replication & Sharding",
+          "file": "07-architecture/replication-and-sharding.md",
+          "estMinutes": 10,
+          "quiz": [
+            {
+              "q": "Sharding splits data by…",
+              "options": ["Copying it everywhere", "Partitioning rows across multiple databases", "Encrypting it", "Deleting old rows"],
+              "answer": 1,
+              "explain": "Sharding partitions a dataset across nodes (e.g. by user id) so no single DB holds everything."
+            },
+            {
+              "q": "A user updates their profile, reloads, and sees the OLD data. Likely cause?",
+              "options": ["A missing index", "Replication lag — the read hit a replica that hasn't caught up", "A CORS error", "A deadlock"],
+              "answer": 1,
+              "explain": "Classic read-after-write problem. Route a user's reads to the primary briefly after they write."
+            }
+          ],
+          "resources": [
+            { "title": "Designing Data-Intensive Applications", "url": "https://dataintensive.net/", "type": "book", "note": "THE book for this stage. Chapters 5–6 cover replication and partitioning definitively." },
+            { "title": "PostgreSQL replication docs", "url": "https://www.postgresql.org/docs/current/high-availability.html", "type": "docs" }
+          ]
+        },
+        {
+          "id": "cap-and-idempotency",
+          "title": "CAP Theorem & Idempotency",
+          "file": "07-architecture/cap-and-idempotency.md",
+          "estMinutes": 9,
+          "quiz": [
+            {
+              "q": "An idempotent operation…",
+              "options": ["Runs faster each time", "Has the same effect if repeated", "Can't fail", "Needs no network"],
+              "answer": 1,
+              "explain": "Idempotency means retrying the same request (e.g. with an idempotency key) won't double-charge or duplicate."
+            },
+            {
+              "q": "Because network partitions are unavoidable, CAP really forces you to choose between…",
+              "options": ["Speed and cost", "Consistency and Availability", "SQL and NoSQL", "TCP and UDP"],
+              "answer": 1,
+              "explain": "You must tolerate partitions, so the real question is: when the network splits, do you refuse to answer (C) or answer possibly-stale data (A)?"
+            }
+          ],
+          "resources": [
+            { "title": "Please stop calling databases CP or AP", "url": "https://martin.kleppmann.com/2015/05/11/please-stop-calling-databases-cp-or-ap.html", "type": "article", "note": "Kleppmann on why the CAP framing is often misused." },
+            { "title": "Stripe — idempotent requests", "url": "https://stripe.com/docs/api/idempotent_requests", "type": "docs", "note": "The canonical real-world implementation of idempotency keys." }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "devops",
+      "order": 8,
+      "title": "DevOps & Deployment",
+      "icon": "🚀",
+      "summary": "Ship it reliably: containers, pipelines, deployment strategies, infrastructure as code, and the cloud.",
+      "lessons": [
+        {
+          "id": "containers-docker",
+          "title": "Containers & Docker",
+          "file": "08-devops/containers-docker.md",
+          "estMinutes": 10,
+          "quiz": [
+            {
+              "q": "A container mainly guarantees…",
+              "options": ["Infinite scaling", "The same environment everywhere it runs", "No bugs", "Free hosting"],
+              "answer": 1,
+              "explain": "Containers package your app with its dependencies so 'works on my machine' becomes 'works everywhere'."
+            },
+            {
+              "q": "Why COPY package.json and install deps BEFORE copying your source code?",
+              "options": ["It's alphabetical", "Layer caching — deps rarely change, so that expensive layer stays cached", "It's required by Docker", "To reduce security risk"],
+              "answer": 1,
+              "explain": "A changed layer invalidates every layer after it. Copying source first would reinstall all dependencies on every build."
+            }
+          ],
+          "resources": [
+            { "title": "Docker — get started", "url": "https://docs.docker.com/get-started/", "type": "docs" },
+            { "title": "Play with Docker", "url": "https://labs.play-with-docker.com/", "type": "interactive", "note": "A free Docker sandbox in the browser." },
+            { "title": "Dockerfile best practices", "url": "https://docs.docker.com/build/building/best-practices/", "type": "docs" }
+          ]
+        },
+        {
+          "id": "kubernetes-basics",
+          "title": "Kubernetes Basics",
+          "file": "08-devops/kubernetes-basics.md",
+          "estMinutes": 10,
+          "quiz": [
+            {
+              "q": "Kubernetes primarily helps you…",
+              "options": ["Write CSS", "Orchestrate and self-heal many containers", "Design databases", "Replace HTTP"],
+              "answer": 1,
+              "explain": "Kubernetes schedules, scales, and restarts containers across a cluster automatically."
+            },
+            {
+              "q": "A failing readinessProbe causes Kubernetes to…",
+              "options": ["Restart the pod", "Stop sending it traffic, but leave it running", "Delete the deployment", "Scale up"],
+              "answer": 1,
+              "explain": "Readiness controls traffic; liveness controls restarts. Confusing them causes restart loops or traffic sent to broken pods."
+            }
+          ],
+          "resources": [
+            { "title": "Kubernetes — concepts", "url": "https://kubernetes.io/docs/concepts/", "type": "docs" },
+            { "title": "Kubernetes the Hard Way", "url": "https://github.com/kelseyhightower/kubernetes-the-hard-way", "type": "course", "note": "Build a cluster from scratch to truly understand it." },
+            { "title": "Play with Kubernetes", "url": "https://labs.play-with-k8s.com/", "type": "interactive" }
+          ]
+        },
+        {
+          "id": "ci-cd",
+          "title": "CI/CD Pipelines",
+          "file": "08-devops/ci-cd.md",
+          "estMinutes": 9,
+          "quiz": [
+            {
+              "q": "Continuous Integration mostly means…",
+              "options": ["Deploying to users", "Automatically building & testing every change", "Writing docs", "Manual QA only"],
+              "answer": 1,
+              "explain": "CI runs your build and tests on every commit so problems surface immediately, before they pile up."
+            }
+          ],
+          "resources": [
+            { "title": "GitHub Actions — quickstart", "url": "https://docs.github.com/en/actions/quickstart", "type": "docs" },
+            { "title": "Continuous Integration", "url": "https://martinfowler.com/articles/continuousIntegration.html", "type": "article", "note": "Fowler's original essay defining the practice." }
+          ]
+        },
+        {
+          "id": "deployment-strategies",
+          "title": "Zero-Downtime Deployment Strategies",
+          "file": "08-devops/deployment-strategies.md",
+          "estMinutes": 10,
+          "quiz": [
+            {
+              "q": "Which strategy lets you test on 5% of real traffic before full rollout?",
+              "options": ["Recreate", "Rolling", "Canary", "Blue-green"],
+              "answer": 2,
+              "explain": "A canary release routes a small slice of traffic to the new version so you catch problems with few users affected."
+            },
+            {
+              "q": "You need to rename a database column with zero downtime. What's the safe path?",
+              "options": ["Rename it in one migration during deploy", "Expand: add the new column, write to both, backfill, switch reads, then drop the old one", "Take the site offline", "Rename it in the ORM only"],
+              "answer": 1,
+              "explain": "The expand/contract pattern. During a rolling deploy, old and new code run simultaneously — the schema must satisfy both."
+            }
+          ],
+          "resources": [
+            { "title": "Deployment strategies compared", "url": "https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#strategy", "type": "docs" },
+            { "title": "BlueGreenDeployment", "url": "https://martinfowler.com/bliki/BlueGreenDeployment.html", "type": "article" },
+            { "title": "Expand/contract migrations", "url": "https://martinfowler.com/bliki/ParallelChange.html", "type": "article", "note": "How to change a schema/API without breaking anything mid-deploy." }
+          ]
+        },
+        {
+          "id": "infrastructure-as-code",
+          "title": "Infrastructure as Code",
+          "file": "08-devops/infrastructure-as-code.md",
+          "estMinutes": 9,
+          "quiz": [
+            {
+              "q": "The main benefit of Infrastructure as Code is…",
+              "options": ["It's cheaper", "Infrastructure becomes versioned, reviewable, and reproducible", "It removes the need for the cloud", "It speeds up your app"],
+              "answer": 1,
+              "explain": "Clicking around a console isn't repeatable or reviewable. IaC puts infra in git — diffable, auditable, and rebuildable."
+            },
+            {
+              "q": "What is 'configuration drift'?",
+              "options": ["Slow networking", "Real infrastructure no longer matches the code, because someone changed it by hand", "A memory leak", "A DNS issue"],
+              "answer": 1,
+              "explain": "Manual console edits cause drift. That's why IaC tools have a plan/diff step — and why you don't hand-edit production."
+            }
+          ],
+          "resources": [
+            { "title": "Terraform — get started", "url": "https://developer.hashicorp.com/terraform/tutorials", "type": "course" },
+            { "title": "Infrastructure as Code (book)", "url": "https://infrastructure-as-code.com/book/", "type": "book" },
+            { "title": "Pulumi — IaC in real languages", "url": "https://www.pulumi.com/docs/", "type": "docs" }
+          ]
+        },
+        {
+          "id": "cloud-and-reverse-proxies",
+          "title": "Cloud Basics & Reverse Proxies",
+          "file": "08-devops/cloud-and-reverse-proxies.md",
+          "estMinutes": 9,
+          "quiz": [
+            {
+              "q": "A reverse proxy (like Nginx) sits…",
+              "options": ["Inside the database", "In front of your app servers", "In the browser", "In DNS"],
+              "answer": 1,
+              "explain": "A reverse proxy fronts your servers to handle TLS, routing, caching, and load distribution."
+            }
+          ],
+          "resources": [
+            { "title": "Nginx beginner's guide", "url": "https://nginx.org/en/docs/beginners_guide.html", "type": "docs" },
+            { "title": "Caddy — automatic HTTPS", "url": "https://caddyserver.com/docs/", "type": "tool", "note": "The easiest reverse proxy to start with — HTTPS with zero config." },
+            { "title": "AWS well-architected framework", "url": "https://aws.amazon.com/architecture/well-architected/", "type": "docs" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "system-design",
+      "order": 9,
+      "title": "System Design",
+      "icon": "🧠",
+      "summary": "Put it all together. Reason about real systems the way senior engineers do in interviews and on the job.",
+      "lessons": [
+        {
+          "id": "design-url-shortener",
+          "title": "Design: URL Shortener",
+          "file": "09-system-design/design-url-shortener.md",
+          "estMinutes": 12,
+          "quiz": [
+            {
+              "q": "Which component makes short-code lookups fast at scale?",
+              "options": ["A bigger CSS file", "A cache in front of the database", "More DNS records", "A slower hash"],
+              "answer": 1,
+              "explain": "Reads dominate; a cache (e.g. Redis) in front of the key-value store keeps redirects fast."
+            },
+            {
+              "q": "Why is Base62-encoding a unique ID better than hashing the URL?",
+              "options": ["It's shorter to type", "Collisions become structurally impossible — no check-and-retry needed", "It's encrypted", "Hashes don't work on URLs"],
+              "answer": 1,
+              "explain": "Each ID is unique, so each code is unique by construction. Hashing requires a uniqueness check on every write."
+            }
+          ],
+          "resources": [
+            { "title": "System Design Primer", "url": "https://github.com/donnemartin/system-design-primer", "type": "course" },
+            { "title": "ByteByteGo — system design", "url": "https://bytebytego.com/", "type": "course", "note": "Excellent visual system-design breakdowns." },
+            { "title": "Snowflake IDs", "url": "https://en.wikipedia.org/wiki/Snowflake_ID", "type": "article", "note": "How to generate unique, time-sortable IDs across many servers." }
+          ]
+        },
+        {
+          "id": "design-rate-limiter",
+          "title": "Design: Rate Limiter",
+          "file": "09-system-design/design-rate-limiter.md",
+          "estMinutes": 11,
+          "quiz": [
+            {
+              "q": "The token bucket algorithm allows…",
+              "options": ["No bursts ever", "Short bursts up to the bucket size", "Unlimited traffic", "Only one request total"],
+              "answer": 1,
+              "explain": "Token bucket refills at a steady rate but lets clients spend saved tokens for brief bursts."
+            },
+            {
+              "q": "Why does `GET count; if ok: SET count+1` fail as a rate limiter?",
+              "options": ["Redis is too slow", "It's a race condition — two servers can both read the same count and both pass", "SET is deprecated", "It uses too much memory"],
+              "answer": 1,
+              "explain": "Check-then-act isn't atomic. Use a Lua script or an atomic INCR so the read+write happen as one operation."
+            }
+          ],
+          "resources": [
+            { "title": "Rate limiting strategies", "url": "https://cloud.google.com/architecture/rate-limiting-strategies-techniques", "type": "article" },
+            { "title": "How Stripe rate-limits", "url": "https://stripe.com/blog/rate-limiters", "type": "article", "note": "A real production design, with code." },
+            { "title": "Redis rate limiting patterns", "url": "https://redis.io/docs/latest/develop/use-cases/rate-limiting/", "type": "docs" }
+          ]
+        },
+        {
+          "id": "design-chat-system",
+          "title": "Design: Chat System",
+          "file": "09-system-design/design-chat-system.md",
+          "estMinutes": 12,
+          "quiz": [
+            {
+              "q": "Real-time chat delivery typically relies on…",
+              "options": ["Polling every hour", "WebSockets and a message broker", "Only REST GETs", "Static files"],
+              "answer": 1,
+              "explain": "Persistent WebSocket connections plus a broker/fan-out layer deliver messages instantly to recipients."
+            },
+            {
+              "q": "Alice is on server-1 and Bob is on server-3. How does Alice's message reach Bob?",
+              "options": ["Server-1 calls server-3 directly", "Via a shared pub/sub broker that server-3 subscribes to for Bob", "Through DNS", "It can't"],
+              "answer": 1,
+              "explain": "Direct server-to-server is O(n²) and brittle. A pub/sub backbone decouples them entirely."
+            }
+          ],
+          "resources": [
+            { "title": "How Discord stores billions of messages", "url": "https://discord.com/blog/how-discord-stores-billions-of-messages", "type": "article", "note": "A real, readable engineering deep-dive." },
+            { "title": "WhatsApp architecture", "url": "https://highscalability.com/the-whatsapp-architecture-facebook-bought-for-19-billion/", "type": "article" }
+          ]
+        },
+        {
+          "id": "design-news-feed",
+          "title": "Design: News Feed",
+          "file": "09-system-design/design-news-feed.md",
+          "estMinutes": 12,
+          "quiz": [
+            {
+              "q": "'Fan-out on write' means…",
+              "options": ["Computing the feed when the user opens the app", "Pushing a new post into every follower's feed at post time", "Deleting old posts", "Caching the database"],
+              "answer": 1,
+              "explain": "Fan-out on write precomputes feeds so reads are instant — but a celebrity with 50M followers makes one post cost 50M writes."
+            },
+            {
+              "q": "How do real systems handle celebrity accounts?",
+              "options": ["Ban them", "A hybrid: fan-out on write for normal users, fan-out on read for celebrities", "Fan-out on write for everyone", "Only show them to nobody"],
+              "answer": 1,
+              "explain": "Celebrity posts are pulled at read time and merged into the precomputed feed — avoiding the massive write amplification."
+            }
+          ],
+          "resources": [
+            { "title": "Facebook's feed architecture", "url": "https://engineering.fb.com/2021/02/17/production-engineering/ml-for-feed-ranking/", "type": "article" },
+            { "title": "Twitter's timeline at scale", "url": "https://highscalability.com/the-architecture-twitter-uses-to-deal-with-150m-active-users/", "type": "article", "note": "The classic fan-out discussion, including the celebrity problem." }
+          ]
+        },
+        {
+          "id": "distributed-systems",
+          "title": "Distributed Systems Concepts",
+          "file": "09-system-design/distributed-systems.md",
+          "estMinutes": 11,
+          "quiz": [
+            {
+              "q": "Eventual consistency means…",
+              "options": ["Data is never consistent", "Replicas converge to the same value over time", "No replication", "Writes are blocked"],
+              "answer": 1,
+              "explain": "Under eventual consistency, replicas may briefly differ but converge once updates propagate."
+            },
+            {
+              "q": "Why must you add 'jitter' to exponential backoff?",
+              "options": ["To make retries slower", "So all clients don't retry at the same instant and re-crash the service", "To encrypt retries", "It's not needed"],
+              "answer": 1,
+              "explain": "Without randomness, every client retries in sync — a thundering herd that kills the service the moment it recovers."
+            }
+          ],
+          "resources": [
+            { "title": "Designing Data-Intensive Applications", "url": "https://dataintensive.net/", "type": "book", "note": "If you read one backend book in your life, make it this one." },
+            { "title": "Fallacies of distributed computing", "url": "https://en.wikipedia.org/wiki/Fallacies_of_distributed_computing", "type": "article" },
+            { "title": "AWS Builders' Library", "url": "https://aws.amazon.com/builders-library/", "type": "course", "note": "How Amazon actually builds resilient systems — timeouts, retries, health checks." }
+          ]
+        },
+        {
+          "id": "performance-profiling",
+          "title": "Performance & Profiling",
+          "file": "09-system-design/performance-profiling.md",
+          "estMinutes": 10,
+          "quiz": [
+            {
+              "q": "What's the first step when something is 'slow'?",
+              "options": ["Add more servers", "Measure to find the actual bottleneck", "Rewrite it in Rust", "Add a cache"],
+              "answer": 1,
+              "explain": "Optimizing without measuring is guessing. Profile first — the bottleneck is almost never where you assume."
+            },
+            {
+              "q": "Amdahl's law implies that…",
+              "options": ["Everything can be parallelized", "Speedup is capped by the part you can't optimize", "More cores always help", "Caching is useless"],
+              "answer": 1,
+              "explain": "If 90% of time is one DB query, making everything else infinitely fast gains you only 10%. Fix the dominant cost."
+            }
+          ],
+          "resources": [
+            { "title": "Latency numbers every programmer should know", "url": "https://gist.github.com/jboner/2841832", "type": "article", "note": "Memorize the orders of magnitude. It changes how you design." },
+            { "title": "Brendan Gregg — systems performance", "url": "https://www.brendangregg.com/methodology.html", "type": "article", "note": "The USE method and flame graphs, from the master." },
+            { "title": "k6 — load testing", "url": "https://grafana.com/docs/k6/latest/", "type": "tool" }
+          ]
+        },
+        {
+          "id": "testing-backends",
+          "title": "Testing Backends",
+          "file": "09-system-design/testing-backends.md",
+          "estMinutes": 9,
+          "quiz": [
+            {
+              "q": "The base of the test pyramid is…",
+              "options": ["End-to-end tests", "Manual testing", "Many fast unit tests", "Load tests"],
+              "answer": 2,
+              "explain": "Most tests should be fast, focused unit tests; fewer integration and E2E tests sit above them."
+            },
+            {
+              "q": "Which test most reliably prevents a real security breach?",
+              "options": ["A snapshot test", "Asserting user A cannot read user B's data", "A CSS test", "A typecheck"],
+              "answer": 1,
+              "explain": "Broken access control (IDOR) is the #1 real-world vulnerability. Test authorization explicitly."
+            }
+          ],
+          "resources": [
+            { "title": "The Practical Test Pyramid", "url": "https://martinfowler.com/articles/practical-test-pyramid.html", "type": "article" },
+            { "title": "Testcontainers", "url": "https://testcontainers.com/", "type": "tool", "note": "Run a real database in Docker for your integration tests." }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "expert",
+      "order": 10,
+      "title": "Expert Track",
+      "icon": "🧬",
+      "summary": "The deep end. What's actually happening inside your database, and the patterns senior engineers reach for.",
+      "lessons": [
+        {
+          "id": "database-internals",
+          "title": "Database Internals: B-Trees, LSM & the WAL",
+          "file": "10-expert/database-internals.md",
+          "estMinutes": 13,
+          "quiz": [
+            {
+              "q": "Why are B-trees good for reads but LSM-trees better for heavy writes?",
+              "options": ["B-trees are newer", "LSM buffers writes in memory and flushes sequentially, avoiding random disk writes", "B-trees don't support indexes", "LSM uses no disk"],
+              "answer": 1,
+              "explain": "B-trees update in place (random I/O). LSM-trees append to memory then flush sorted runs sequentially — much faster writes, at the cost of read amplification."
+            },
+            {
+              "q": "What does the Write-Ahead Log (WAL) guarantee?",
+              "options": ["Faster queries", "Durability — a committed transaction survives a crash because it was logged before being applied", "Smaller storage", "Better indexes"],
+              "answer": 1,
+              "explain": "The WAL is written and fsynced before the change is applied. On crash, the DB replays the log. That's the 'D' in ACID."
+            }
+          ],
+          "resources": [
+            { "title": "Database Internals (book)", "url": "https://www.databass.dev/", "type": "book", "note": "Alex Petrov's deep dive into storage engines. The definitive text." },
+            { "title": "How does a database work? (Let's Build a Simple Database)", "url": "https://cstack.github.io/db_tutorial/", "type": "course", "note": "Build a database from scratch in C — the best way to truly get it." },
+            { "title": "B-tree vs LSM-tree", "url": "https://www.scylladb.com/glossary/log-structured-merge-tree/", "type": "article" }
+          ]
+        },
+        {
+          "id": "concurrency-and-locking",
+          "title": "Concurrency Control & Locking",
+          "file": "10-expert/concurrency-and-locking.md",
+          "estMinutes": 12,
+          "quiz": [
+            {
+              "q": "Optimistic locking works by…",
+              "options": ["Locking the row immediately", "Checking a version number on write and failing if it changed", "Blocking all readers", "Disabling transactions"],
+              "answer": 1,
+              "explain": "Optimistic concurrency assumes conflicts are rare: read a version, and on update assert it's unchanged. If it changed, retry."
+            },
+            {
+              "q": "The classic way to avoid deadlocks between transactions is…",
+              "options": ["Use bigger transactions", "Always acquire locks in a consistent order", "Disable indexes", "Use more threads"],
+              "answer": 1,
+              "explain": "Deadlock happens when A locks row 1 then 2, while B locks row 2 then 1. A consistent global lock ordering makes that impossible."
+            }
+          ],
+          "resources": [
+            { "title": "PostgreSQL explicit locking", "url": "https://www.postgresql.org/docs/current/explicit-locking.html", "type": "docs" },
+            { "title": "MVCC explained", "url": "https://www.postgresql.org/docs/current/mvcc-intro.html", "type": "docs", "note": "How Postgres lets readers and writers avoid blocking each other." },
+            { "title": "Martin Kleppmann — how to do distributed locking", "url": "https://martin.kleppmann.com/2016/02/08/how-to-do-distributed-locking.html", "type": "article", "note": "Why naive Redis locks are unsafe. A masterclass in rigorous thinking." }
+          ]
+        },
+        {
+          "id": "event-sourcing-cqrs",
+          "title": "Event Sourcing & CQRS",
+          "file": "10-expert/event-sourcing-cqrs.md",
+          "estMinutes": 12,
+          "quiz": [
+            {
+              "q": "In event sourcing, the source of truth is…",
+              "options": ["The current state table", "The immutable append-only log of events that produced the state", "A cache", "The API response"],
+              "answer": 1,
+              "explain": "You store every event ever (Deposited, Withdrew). Current state is derived by replaying them — giving you a perfect audit log and time travel."
+            },
+            {
+              "q": "CQRS separates…",
+              "options": ["Frontend and backend", "The write model from the read model", "SQL and NoSQL", "Dev and prod"],
+              "answer": 1,
+              "explain": "Commands (writes) and Queries (reads) get different models, so each can be optimized independently — often with different databases."
+            }
+          ],
+          "resources": [
+            { "title": "Event Sourcing", "url": "https://martinfowler.com/eaaDev/EventSourcing.html", "type": "article", "note": "Fowler's original definition." },
+            { "title": "CQRS", "url": "https://martinfowler.com/bliki/CQRS.html", "type": "article", "note": "Including his warnings about when NOT to use it." },
+            { "title": "Turning the database inside out", "url": "https://www.confluent.io/blog/turning-the-database-inside-out-with-apache-samza/", "type": "article", "note": "Kleppmann's famous talk — a genuinely mind-expanding read." }
+          ]
+        },
+        {
+          "id": "probabilistic-data-structures",
+          "title": "Bloom Filters & Probabilistic Structures",
+          "file": "10-expert/probabilistic-data-structures.md",
+          "estMinutes": 11,
+          "quiz": [
+            {
+              "q": "A Bloom filter can tell you…",
+              "options": ["Definitely present or definitely absent", "Definitely absent, or *probably* present (false positives possible, never false negatives)", "The exact count", "Nothing useful"],
+              "answer": 1,
+              "explain": "That one-sided error is the whole trick: a 'no' is certain, so you can skip an expensive lookup entirely. A 'maybe' costs you one check."
+            },
+            {
+              "q": "Why use HyperLogLog to count unique visitors?",
+              "options": ["It's exact", "It estimates cardinality of billions of items in ~12KB instead of storing every ID", "It's a type of cache", "It replaces Redis"],
+              "answer": 1,
+              "explain": "Exact counting needs a set of every ID (gigabytes). HLL trades ~2% error for constant, tiny memory."
+            }
+          ],
+          "resources": [
+            { "title": "Bloom filters by example", "url": "https://llimllib.github.io/bloomfilter-tutorial/", "type": "interactive", "note": "Play with one in the browser — it clicks immediately." },
+            { "title": "Redis probabilistic data types", "url": "https://redis.io/docs/latest/develop/data-types/probabilistic/", "type": "docs" },
+            { "title": "HyperLogLog explained", "url": "https://redis.io/blog/redis-new-data-structure-the-hyperloglog/", "type": "article", "note": "By Redis's creator, antirez." }
+          ]
+        },
+        {
+          "id": "domain-driven-design",
+          "title": "Domain-Driven Design",
+          "file": "10-expert/domain-driven-design.md",
+          "estMinutes": 12,
+          "quiz": [
+            {
+              "q": "A 'bounded context' is…",
+              "options": ["A database table", "An explicit boundary within which a model and its terms have one consistent meaning", "A cache key", "A type of index"],
+              "answer": 1,
+              "explain": "'Customer' means something different to Billing than to Support. Bounded contexts let each own its model instead of forcing one global schema."
+            },
+            {
+              "q": "Why does DDD matter for microservices?",
+              "options": ["It doesn't", "Bounded contexts are the natural, correct seams to split services along", "It makes them faster", "It replaces HTTP"],
+              "answer": 1,
+              "explain": "Splitting by technical layer creates chatty, coupled services. Splitting by bounded context gives services that own their data and change independently."
+            }
+          ],
+          "resources": [
+            { "title": "Domain-Driven Design Quickly (free book)", "url": "https://www.infoq.com/minibooks/domain-driven-design-quickly/", "type": "book", "note": "A free 100-page distillation of Eric Evans' work." },
+            { "title": "BoundedContext", "url": "https://martinfowler.com/bliki/BoundedContext.html", "type": "article" },
+            { "title": "Ubiquitous Language", "url": "https://martinfowler.com/bliki/UbiquitousLanguage.html", "type": "article" }
+          ]
+        }
+      ]
+    }
+  ]
+}
