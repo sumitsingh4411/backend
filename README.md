@@ -4,37 +4,60 @@
 
 ### Learn backend engineering, from zero to system design.
 
-**The whole course is on this page — you don't need to go anywhere else.**
-Prefer it interactive, with quizzes and progress tracking? **[backend.nextjoblist.com](https://backend.nextjoblist.com/)**
+# **The entire course is on this page.**
 
-Every concept is language-agnostic. Every trap is one that takes down real production systems.
+No signup. No video. No "part 2 coming soon".
+Scroll down and start learning — everything below is the material itself.
 
 <br />
 
-[![Read it live](https://img.shields.io/badge/📖_Read_it_live-backend.nextjoblist.com-6366f1?style=for-the-badge)](https://backend.nextjoblist.com/)
-[![Interview questions](https://img.shields.io/badge/System_design-130_questions-f43f5e?style=for-the-badge)](https://backend.nextjoblist.com/pro/system-design/questions)
-
-![Level](https://img.shields.io/badge/Level-Beginner%20→%20Pro-10b981?style=flat-square)
-![Read time](https://img.shields.io/badge/Read%20time-~90%20min-64748b?style=flat-square)
-![Prereqs](https://img.shields.io/badge/Prerequisites-none-64748b?style=flat-square)
-![License](https://img.shields.io/badge/Free-forever-10b981?style=flat-square)
+![Level](https://img.shields.io/badge/Level-Beginner%20→%20Pro-6366f1?style=for-the-badge)
+![Read time](https://img.shields.io/badge/Read-~90%20min-10b981?style=for-the-badge)
+![Prereqs](https://img.shields.io/badge/Prerequisites-none-64748b?style=for-the-badge)
+![Cost](https://img.shields.io/badge/Cost-free%20forever-10b981?style=for-the-badge)
 
 </div>
 
-> **68 lessons · 36 reference pages · 130 system-design interview questions · a 120-term glossary · ~51,000 words.**
-> Databases · APIs · Security · Caching & Queues · Performance · Reliability · DevOps · System Design.
+<table>
+<tr>
+<td width="25%" align="center"><b>11</b><br /><sub>parts, zero → pro</sub></td>
+<td width="25%" align="center"><b>130</b><br /><sub>interview questions</sub></td>
+<td width="25%" align="center"><b>120+</b><br /><sub>glossary terms</sub></td>
+<td width="25%" align="center"><b>~15,000</b><br /><sub>words, all right here</sub></td>
+</tr>
+</table>
+
+**Databases · APIs · Security · Caching & Queues · Performance · Reliability · DevOps · System Design**
+
+Every concept is **language-agnostic** — the ideas hold whether you write Node, Python, Go or Java.
+Every 🚨 is a trap that takes down **real production systems**.
 
 ---
 
 ## How to use this page
 
-Read it **top to bottom once**, even the parts that feel too advanced — you'll understand the shape of the thing. Then come back and use it as a **reference**.
+Read it **top to bottom once**, even the parts that feel too advanced — you'll come away knowing the *shape* of the thing. Then come back and use it as a **reference** forever.
 
-If you only have 20 minutes, read these three sections and nothing else:
+### ⏱️ Only have 20 minutes?
 
-1. **[Indexes](#41-indexes--the-single-biggest-win)** — missing indexes cause more slowness than everything else combined
-2. **[The N+1 query](#43-the-n1-query--the-most-common-bug-in-backend-code)** — you have written this bug; you just don't know it yet
-3. **[Timeouts](#81-timeouts--the-default-is-wait-forever)** — one slow dependency takes down your whole service without them
+Read these three and nothing else. They cover more real-world breakage than the rest combined:
+
+| | Read this | Because |
+|:--|---|---|
+| **1** | **[Indexes](#41-indexes--the-single-biggest-win)** | Missing indexes cause more slowness than everything else put together |
+| **2** | **[The N+1 query](#43-the-n1-query--the-most-common-bug-in-backend-code)** | You have written this bug. You just don't know it yet. |
+| **3** | **[Timeouts](#81-timeouts--the-default-is-wait-forever)** | One slow dependency takes down your *whole* service without them |
+
+### 🧭 Pick your path
+
+| If you are… | Start at | Why |
+|---|---|---|
+| 🌱 **New to backend** | [Part 0 · Foundations](#part-0--foundations) | Starts at "what is a server". Assumes nothing. |
+| 🎨 **A frontend dev switching over** | [Part 1 · HTTP](#part-1--http) → then jump to [Part 4 · Databases](#part-4--databases) | You already know HTTP from `fetch()`. **Databases are the real gap.** |
+| 🔧 **Already shipping APIs** | [Part 4 · Databases](#part-4--databases) → [Part 7 · Performance](#part-7--performance) | Fill the holes: indexes, transactions, N+1, p99 |
+| 🎯 **Prepping for interviews** | [The interview round](#-the-system-design-interview) → [130 questions](#-130-system-design-interview-questions) | The method, then the full question bank |
+| 🚨 **On call, something's broken** | [Part 8 · Reliability](#part-8--reliability) | Timeouts, retries, circuit breakers, the outbox |
+| 🧠 **Just want the vocabulary** | [Backend glossary](#-backend-glossary--the-terms-theyll-drop-on-you) | 120+ terms, one sentence each |
 
 ---
 
@@ -113,6 +136,8 @@ A **client** asks. A **server** answers. That's it.
 The important consequence: **the server has no idea who you are between requests.** HTTP is *stateless*. Every request arrives as a stranger. That's why we invented cookies, sessions, and tokens — to re-answer "who is this?" on every single request. ([Part 5](#part-5--security).)
 
 ---
+
+<div align="right"><a href="#contents"><sub>↑ back to contents</sub></a></div>
 
 # Part 1 · HTTP
 
@@ -194,6 +219,8 @@ The server says `Set-Cookie: session=abc`. The browser sends it back on **every*
 You rarely choose this. Your load balancer does. Just know *why* it got faster.
 
 ---
+
+<div align="right"><a href="#contents"><sub>↑ back to contents</sub></a></div>
 
 # Part 2 · Servers & concurrency
 
@@ -317,6 +344,8 @@ If yes, you can scale horizontally: just add more boxes behind a load balancer. 
 | A background `setInterval` | A job queue or a real scheduler |
 
 ---
+
+<div align="right"><a href="#contents"><sub>↑ back to contents</sub></a></div>
 
 # Part 3 · APIs
 
@@ -454,6 +483,8 @@ So CORS protects your **users**. It does nothing to protect your **API**. **Auth
 > **GraphQL's hidden cost:** every field is a resolver, so **N+1 queries are the default**. You need **DataLoader** from day one, plus depth and cost limits — otherwise one malicious query melts your database.
 
 ---
+
+<div align="right"><a href="#contents"><sub>↑ back to contents</sub></a></div>
 
 # Part 4 · Databases
 
@@ -688,6 +719,8 @@ Your app runs 20 instances × a pool of 20 connections each
 
 ---
 
+<div align="right"><a href="#contents"><sub>↑ back to contents</sub></a></div>
+
 # Part 5 · Security
 
 ## 5.1 The two questions, on every request
@@ -799,6 +832,8 @@ Secrets come from the **environment** or a secret manager — never from source,
 
 ---
 
+<div align="right"><a href="#contents"><sub>↑ back to contents</sub></a></div>
+
 # Part 6 · Caching & queues
 
 ## 6.1 Caching is buying speed with staleness
@@ -866,6 +901,8 @@ You add a nightly job with a cron inside your app. In production the app runs on
 **Fix:** a distributed lock (`SET lock NX EX 3600` in Redis) so exactly one instance wins — or a real scheduler (Kubernetes CronJob) that runs the task **once**, outside your app processes.
 
 ---
+
+<div align="right"><a href="#contents"><sub>↑ back to contents</sub></a></div>
 
 # Part 7 · Performance
 
@@ -950,6 +987,8 @@ Fix the 210ms. The 5ms auth check is not your problem.
 | Anything HTTP | **OpenTelemetry** traces |
 
 ---
+
+<div align="right"><a href="#contents"><sub>↑ back to contents</sub></a></div>
 
 # Part 8 · Reliability
 
@@ -1041,6 +1080,8 @@ COMMIT;   -- both land, or neither does
 
 ---
 
+<div align="right"><a href="#contents"><sub>↑ back to contents</sub></a></div>
+
 # Part 9 · DevOps & deploys
 
 ## 9.1 Containers
@@ -1120,6 +1161,8 @@ This is how companies deploy dozens of times a day safely: the risky moment isn'
 > Every alert must be **actionable**. An alert nobody acts on trains everyone to ignore alerts — and that's how real outages get missed.
 
 ---
+
+<div align="right"><a href="#contents"><sub>↑ back to contents</sub></a></div>
 
 # Part 10 · System design
 
@@ -1209,6 +1252,8 @@ With `hash % N`, changing N from 4 → 5 servers **remaps ~80% of your keys**. E
 ---
 ---
 
+<div align="right"><a href="#contents"><sub>↑ back to contents</sub></a></div>
+
 # 🎯 The system design interview
 
 ## The 45-minute round, minute by minute
@@ -1254,6 +1299,8 @@ Most candidates fail on **time management**, not knowledge. They spend 25 minute
 
 ---
 ---
+
+<div align="right"><a href="#contents"><sub>↑ back to contents</sub></a></div>
 
 # 📖 Backend glossary — the terms they'll drop on you
 
@@ -1412,6 +1459,8 @@ Every one of these has come up in a real backend interview. If you can't define 
 
 ---
 ---
+
+<div align="right"><a href="#contents"><sub>↑ back to contents</sub></a></div>
 
 # ❓ 130 system design interview questions
 
@@ -1593,6 +1642,8 @@ They want **orders of magnitude**, not decimals. Round `86,400` to `~100k` and m
 ---
 ---
 
+<div align="right"><a href="#contents"><sub>↑ back to contents</sub></a></div>
+
 # 📋 Cheat sheets
 
 <details>
@@ -1645,6 +1696,8 @@ Seconds in a day    86,400
 
 ---
 
+<div align="right"><a href="#contents"><sub>↑ back to contents</sub></a></div>
+
 # 📚 Where to go next
 
 The best free resources, curated. If you read only three: **Use The Index Luke**, the **AWS Builders' Library**, and **DDIA**.
@@ -1666,13 +1719,17 @@ The best free resources, curated. If you read only three: **Use The Index Luke**
 
 ---
 
-# 💻 The interactive version
+<div align="right"><a href="#contents"><sub>↑ back to contents</sub></a></div>
+
+# 💻 Optional: the interactive version
+
+**You've just read the whole course — you don't need this.** But if you'd rather learn with quizzes, progress tracking and search, the same material also runs as a site:
 
 ### 👉 **[backend.nextjoblist.com](https://backend.nextjoblist.com/)** — free, no signup
 
-Everything above, plus **68 lessons with quizzes**, **36 reference pages**, the **[130-question bank](https://backend.nextjoblist.com/pro/system-design/questions)**, progress tracking, ⌘K search, and every code example in 4 languages.
+It adds **68 lessons with quizzes**, **36 reference pages**, progress tracking, ⌘K search, and every code example switchable between **JavaScript, Python, Go and Java**.
 
-Or run it yourself — it's the same repo:
+Or run it yourself — it's this repo:
 
 ```bash
 npm install
@@ -1713,8 +1770,17 @@ The **Pro Shelf** reference pages live in [`src/pages/pro/`](src/pages/pro/), bu
 
 <div align="center">
 
-**Concepts, not frameworks.**
+## Concepts, not frameworks.
 
-If this helped, ⭐ the repo.
+Frameworks change every three years.
+The request lifecycle, indexes, transactions, caching, idempotency and failure modes **don't**.
+
+Learn those, and you can pick up any backend, in any language, and know roughly how it works — and where it will break.
+
+<br />
+
+**If this helped you, ⭐ the repo so the next person finds it.**
+
+<sub><a href="#-backendpath">↑ back to the top</a></sub>
 
 </div>
