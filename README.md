@@ -2,19 +2,27 @@
 
 # ⚡ BackendPath
 
-### Learn backend engineering, from zero to system design — right here.
+### Learn backend engineering, from zero to system design.
 
-**You don't need to go anywhere else. The whole course is on this page.**
+**The whole course is on this page — you don't need to go anywhere else.**
+Prefer it interactive, with quizzes and progress tracking? **[backend.nextjoblist.com](https://backend.nextjoblist.com/)**
 
 Every concept is language-agnostic. Every trap is one that takes down real production systems.
 
 <br />
 
-![React](https://img.shields.io/badge/Read%20time-~90%20min-6366f1?style=for-the-badge)
-![Level](https://img.shields.io/badge/Level-Beginner%20→%20Pro-10b981?style=for-the-badge)
-![Prereqs](https://img.shields.io/badge/Prerequisites-none-64748b?style=for-the-badge)
+[![Read it live](https://img.shields.io/badge/📖_Read_it_live-backend.nextjoblist.com-6366f1?style=for-the-badge)](https://backend.nextjoblist.com/)
+[![Interview questions](https://img.shields.io/badge/System_design-130_questions-f43f5e?style=for-the-badge)](https://backend.nextjoblist.com/pro/system-design/questions)
+
+![Level](https://img.shields.io/badge/Level-Beginner%20→%20Pro-10b981?style=flat-square)
+![Read time](https://img.shields.io/badge/Read%20time-~90%20min-64748b?style=flat-square)
+![Prereqs](https://img.shields.io/badge/Prerequisites-none-64748b?style=flat-square)
+![License](https://img.shields.io/badge/Free-forever-10b981?style=flat-square)
 
 </div>
+
+> **68 lessons · 36 reference pages · 130 system-design interview questions · a 120-term glossary · ~51,000 words.**
+> Databases · APIs · Security · Caching & Queues · Performance · Reliability · DevOps · System Design.
 
 ---
 
@@ -1660,7 +1668,11 @@ The best free resources, curated. If you read only three: **Use The Index Luke**
 
 # 💻 The interactive version
 
-Everything above — plus **68 lessons with quizzes**, **36 reference pages**, progress tracking, ⌘K search and code in 4 languages — runs as a site in this repo:
+### 👉 **[backend.nextjoblist.com](https://backend.nextjoblist.com/)** — free, no signup
+
+Everything above, plus **68 lessons with quizzes**, **36 reference pages**, the **[130-question bank](https://backend.nextjoblist.com/pro/system-design/questions)**, progress tracking, ⌘K search, and every code example in 4 languages.
+
+Or run it yourself — it's the same repo:
 
 ```bash
 npm install
