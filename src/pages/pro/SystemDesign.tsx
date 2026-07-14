@@ -12,6 +12,7 @@ import {
   Rules,
   Snippet,
 } from "../../components/ProKit";
+import { BackendGlossary, Interview, QuestionBank } from "./interviewBank";
 
 /* ─────────────────────────── 01 · The method ─────────────────────────── */
 
@@ -511,5 +512,32 @@ export const systemDesignSections: ProSection[] = [
       "URL shortener, the news-feed celebrity problem, chat, and a rate limiter — end to end.",
     minutes: 9,
     Content: WorkedDesigns,
+  },
+  {
+    id: "interview",
+    title: "The interview round",
+    icon: "🎯",
+    kicker:
+      "The 45 minutes minute-by-minute, what they actually grade, and the seven ways people fail.",
+    minutes: 6,
+    Content: Interview,
+  },
+  {
+    id: "glossary",
+    title: "Backend glossary",
+    icon: "📖",
+    kicker:
+      "The ~120 terms they'll drop on you — each defined in one sentence, each linked to where to learn it.",
+    minutes: 12,
+    Content: BackendGlossary,
+  },
+  {
+    id: "questions",
+    title: "130 interview questions",
+    icon: "❓",
+    kicker:
+      "The full bank: 35 'Design X' prompts, 30 deep dives, 40 concepts, 12 estimations, 13 trade-offs.",
+    minutes: 20,
+    Content: QuestionBank,
   },
 ];

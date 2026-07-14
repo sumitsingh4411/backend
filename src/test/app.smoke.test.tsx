@@ -246,6 +246,74 @@ describe("app smoke", () => {
     }
   });
 
+  it("has all 130 interview questions on their own page, each linked", async () => {
+    renderApp("/pro/system-design/questions");
+
+    await waitFor(() =>
+      expect(
+        screen.getByRole("heading", {
+          level: 1,
+          name: /130 interview questions/i,
+        }),
+      ).toBeDefined(),
+    );
+
+    // the bank is numbered 1..130 — every number renders exactly once
+    const listItems = document.querySelectorAll("ol > li");
+    expect(listItems.length).toBe(130);
+    for (const n of [1, 35, 36, 65, 66, 105, 106, 117, 118, 130]) {
+      expect(screen.getAllByText(String(n)).length).toBeGreaterThan(0);
+    }
+
+    // spot-check the five categories are all present
+    for (const cat of [
+      /Design.{0,3}X.{0,3} prompts/i,
+      /deep dives/i,
+      /concept & terminology/i,
+      /estimation questions/i,
+      /trade-off questions/i,
+    ]) {
+      expect(screen.getAllByText(cat).length).toBeGreaterThan(0);
+    }
+
+    // questions link into the site's own pages, and those routes exist
+    const proLinks = Array.from(
+      document.querySelectorAll<HTMLAnchorElement>('a[href^="/pro/"]'),
+    );
+    const real = new Set(
+      PRO_TOPICS.flatMap((t) => [
+        `/pro/${t.id}`,
+        ...getSections(t.id).map((s) => `/pro/${t.id}/${s.id}`),
+      ]),
+    );
+    for (const a of proLinks) {
+      expect(
+        real.has(a.getAttribute("href")!),
+        `dead link ${a.getAttribute("href")}`,
+      ).toBe(true);
+    }
+  });
+
+  it("puts the glossary and the interview round on System Design", async () => {
+    const ids = getSections("system-design").map((s) => s.id);
+    expect(ids).toContain("interview");
+    expect(ids).toContain("glossary");
+    expect(ids).toContain("questions");
+
+    renderApp("/pro/system-design/glossary");
+    await waitFor(() =>
+      expect(
+        screen.getByRole("heading", { level: 1, name: /Backend glossary/i }),
+      ).toBeDefined(),
+    );
+    // terms are defined, not just listed
+    expect(screen.getAllByText(/Consistent hashing/i).length).toBeGreaterThan(
+      0,
+    );
+    expect(screen.getAllByText(/Bloom filter/i).length).toBeGreaterThan(0);
+    expect(screen.getAllByText(/thundering herd/i).length).toBeGreaterThan(0);
+  });
+
   it("section prev/next crosses the topic boundary", async () => {
     // the last database section should point forward into the first APIs section
     const dbSections = getSections("databases");

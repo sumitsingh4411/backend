@@ -1,8 +1,106 @@
 import type { ReactNode } from "react";
+import { Link } from "react-router-dom";
 import { slugify } from "../lib/toc";
 import { CheckIcon, CloseIcon, ExternalLink } from "./Icons";
 
 /** Shared building blocks for the Pro Shelf topic pages. */
+
+/**
+ * A "learn this" chip. An internal href (starting with "/") routes inside the
+ * site; anything else opens the source in a new tab.
+ */
+function LearnChip({ href, label }: { href: string; label: string }) {
+  const cls =
+    "flex shrink-0 items-center gap-1 self-start rounded-md border border-slate-200/80 px-2 py-1 font-mono text-[10px] uppercase tracking-wider text-slate-500 transition hover:border-brand-400/50 hover:text-brand-500 dark:border-white/10 dark:text-slate-400 dark:hover:border-brand-400/40 dark:hover:text-brand-300";
+
+  if (href.startsWith("/")) {
+    return (
+      <Link to={href} className={cls}>
+        {label}
+      </Link>
+    );
+  }
+  return (
+    <a href={href} target="_blank" rel="noreferrer noopener" className={cls}>
+      {label}
+      <ExternalLink width={10} height={10} />
+    </a>
+  );
+}
+
+export interface QuestionItem {
+  /** The question, as an interviewer would actually ask it. */
+  q: string;
+  /** What they're really testing — the point of the question. */
+  why?: string;
+  /** Where to learn it: an internal route, or an external source. */
+  href?: string;
+  label?: string;
+}
+
+/** A numbered bank of interview questions, each linked to where to learn it. */
+export function Questions({
+  start = 1,
+  items,
+}: {
+  start?: number;
+  items: QuestionItem[];
+}) {
+  return (
+    <ol className="space-y-1.5">
+      {items.map((it, i) => (
+        <li
+          key={it.q}
+          className="flex gap-3 rounded-xl border border-slate-200/70 bg-white/50 p-3 transition hover:border-brand-400/40 dark:border-white/[0.07] dark:bg-white/[0.02]"
+        >
+          <span className="grid h-6 w-6 shrink-0 place-items-center rounded-md bg-slate-100 font-mono text-[11px] font-bold tabular-nums text-slate-500 dark:bg-white/[0.06] dark:text-slate-400">
+            {start + i}
+          </span>
+          <div className="min-w-0 flex-1">
+            <p className="text-[13.5px] font-semibold leading-snug text-ink-900 dark:text-white">
+              {it.q}
+            </p>
+            {it.why && (
+              <p className="mt-1 text-[12.5px] leading-snug text-slate-500 dark:text-slate-400">
+                {it.why}
+              </p>
+            )}
+          </div>
+          {it.href && <LearnChip href={it.href} label={it.label ?? "Learn"} />}
+        </li>
+      ))}
+    </ol>
+  );
+}
+
+export interface GlossaryItem {
+  term: string;
+  def: ReactNode;
+  href?: string;
+  label?: string;
+}
+
+/** Term → one-sentence definition → where to learn it. */
+export function Glossary({ items }: { items: GlossaryItem[] }) {
+  return (
+    <dl className="divide-y divide-slate-200/70 overflow-hidden rounded-xl border border-slate-200/70 dark:divide-white/[0.06] dark:border-white/[0.08]">
+      {items.map((it) => (
+        <div
+          key={it.term}
+          className="flex flex-col gap-1.5 px-4 py-3 sm:flex-row sm:items-start sm:gap-4"
+        >
+          <dt className="shrink-0 text-[13px] font-semibold text-ink-900 dark:text-white sm:w-44">
+            {it.term}
+          </dt>
+          <dd className="min-w-0 flex-1 text-[13px] leading-relaxed text-slate-600 dark:text-slate-300 [&_b]:font-semibold [&_b]:text-ink-900 dark:[&_b]:text-white [&_code]:rounded [&_code]:bg-black/5 [&_code]:px-1 [&_code]:py-0.5 [&_code]:font-mono [&_code]:text-[12px] dark:[&_code]:bg-white/10">
+            {it.def}
+          </dd>
+          {it.href && <LearnChip href={it.href} label={it.label ?? "Learn"} />}
+        </div>
+      ))}
+    </dl>
+  );
+}
 
 /**
  * One section of a topic.
