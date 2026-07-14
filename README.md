@@ -1,13 +1,12 @@
 <div align="center">
 
-# ⚡ BackendPath
+<img src=".github/assets/hero.jpg" alt="BackendPath — learn backend engineering, from zero to system design" width="100%" />
 
-### Learn backend engineering, from zero to system design.
+<br /><br />
 
-# **The entire course is in this repo.**
-
-No signup. No video. No "part 2 coming soon".
-**16 chapters**, each one a single readable page. Start at chapter 0 and go.
+**[📖 Start the course](course/00-foundations.md)** &nbsp;·&nbsp;
+**[❓ 130 interview questions](course/13-interview-questions.md)** &nbsp;·&nbsp;
+**[🌐 Read it as a site](https://backend.nextjoblist.com/)**
 
 <br />
 
@@ -15,6 +14,16 @@ No signup. No video. No "part 2 coming soon".
 ![Read time](https://img.shields.io/badge/Read-~72%20min-10b981?style=for-the-badge)
 ![Prereqs](https://img.shields.io/badge/Prerequisites-none-64748b?style=for-the-badge)
 ![Cost](https://img.shields.io/badge/Cost-free%20forever-10b981?style=for-the-badge)
+
+</div>
+
+---
+
+<div align="center">
+
+### The entire course is in this repo. No signup, no video, no "part 2 coming soon".
+
+**16 chapters**, each a single readable page. Every concept is **language-agnostic** — the ideas hold whether you write Node, Python, Go or Java. Every 🚨 is a trap that takes down **real production systems**.
 
 </div>
 
@@ -26,11 +35,6 @@ No signup. No video. No "part 2 coming soon".
 <td width="25%" align="center"><b>~15,000</b><br /><sub>words, all in this repo</sub></td>
 </tr>
 </table>
-
-**Databases · APIs · Security · Caching & Queues · Performance · Reliability · DevOps · System Design**
-
-Every concept is **language-agnostic** — the ideas hold whether you write Node, Python, Go or Java.
-Every 🚨 is a trap that takes down **real production systems**.
 
 ---
 
@@ -104,17 +108,59 @@ BackendPath teaches the **concepts underneath** — the ones that stay true whet
 
 > **The promise:** finish this and you can look at any backend, in any language, and know roughly how it works and where it will break.
 
+**A taste of what that means in practice** — from [Chapter 4 · Databases](course/04-databases.md#42-reading-an-explain-plan):
+
+```diff
+- ❌ BEFORE
+  Limit  (actual time=142.318..142.325 rows=20)
+    ->  Sort
+          ->  Seq Scan on orders                  ← read the WHOLE table
+                Filter: (user_id = 42)
+                Rows Removed by Filter: 1988688   ← threw away 2 MILLION rows 😱
+  Execution Time: 142.401 ms
+
++ ✅ AFTER  (CREATE INDEX ON orders (user_id, created_at DESC))
+  Limit  (actual time=0.031..0.038 rows=20)
+    ->  Index Scan using orders_user_id_created_at_idx on orders
+          Index Cond: (user_id = 42)              ← walked straight to them
+  Execution Time: 0.061 ms                        ← 2,300× faster
+```
+
 ---
 
-## 💻 Optional: the interactive version
+## 🌐 Prefer it as a website?
 
-**The whole course is in these files — you don't need this.** But if you'd rather learn with quizzes, progress tracking and search, the same material also runs as a site:
+The same material also runs as an interactive site — **[backend.nextjoblist.com](https://backend.nextjoblist.com/)** — free, no signup. It adds 68 lessons with quizzes, progress tracking, ⌘K search, and every code example switchable between **JavaScript, Python, Go and Java**.
 
-### 👉 **[backend.nextjoblist.com](https://backend.nextjoblist.com/)** — free, no signup
+<table>
+<tr>
+<td width="50%">
+<a href="https://backend.nextjoblist.com/lesson/what-is-backend">
+<img src=".github/assets/preview-lesson.jpg" alt="A lesson page: docs sidebar, reader, and an 'On this page' rail" />
+</a>
+<div align="center"><sub><b>Lessons</b> — docs layout, TOC, quizzes, 4 languages</sub></div>
+</td>
+<td width="50%">
+<a href="https://backend.nextjoblist.com/pro/system-design/questions">
+<img src=".github/assets/preview-questions.jpg" alt="The 130-question system design bank" />
+</a>
+<div align="center"><sub><b>130 interview questions</b> — each linked to where to learn it</sub></div>
+</td>
+</tr>
+<tr>
+<td colspan="2">
+<a href="https://backend.nextjoblist.com/roadmap">
+<img src=".github/assets/preview-roadmap.jpg" alt="The roadmap: 11 stages, 68 lessons, with your progress tracked" />
+</a>
+<div align="center"><sub><b>The roadmap</b> — 11 stages, 68 lessons, your progress tracked</sub></div>
+</td>
+</tr>
+</table>
 
-It adds **68 lessons with quizzes**, **36 reference pages**, progress tracking, ⌘K search, and every code example switchable between **JavaScript, Python, Go and Java**.
+<details>
+<summary><b>Run it yourself</b></summary>
 
-Or run it yourself — it's this repo:
+<br />
 
 ```bash
 npm install
@@ -126,11 +172,6 @@ npm run dev        # → http://localhost:5173
 | `npm run dev` | dev server |
 | `npm test` | 31 tests |
 | `npm run build` | production build → `dist/` |
-
-<details>
-<summary><b>How the site content is structured</b> (if you want to add lessons)</summary>
-
-<br />
 
 Content is **data**; the app is a renderer. Lessons are plain Markdown in [`public/content/`](public/content/), listed in `roadmap.json`:
 
